@@ -192,6 +192,11 @@ a:not([href]):not(.disabled) {
         width: 5rem;
         font-size: 0.8rem;
     }
+
+    &.focus, &:focus {
+        outline: none;
+        box-shadow: 0 0 0 0.2rem rgba(49, 112, 143, 0.5);
+    }
 }
 
 @include media-breakpoint-up(md) {
