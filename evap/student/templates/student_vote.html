@@ -339,6 +339,11 @@
                 });
             }
 
+            function isCollapsed(el) {
+                const container = el.closest(".collapse");
+                return container && (!container.classList.contains("show") || isCollapsed(container));
+            }
+
             function selectByNumberKey(row, num) {
                 if (num === 0) {
                     // Select "No answer"
@@ -402,24 +407,29 @@
 
                 const curRowIndex = rows.indexOf(currentRow);
                 const direction = e.shiftKey ? -1 : 1;
-                const nextRowIndex = curRowIndex + direction;
-                if (nextRowIndex === -1) {
-                    // User wants to tab out in front of the form area
-                    // To correctly select the first element in front of the form,
-                    // select the first element tracked by this.
-                    // Just giving back control to the browser here doesn't work, because
-                    // it would navigate backwards through the controls of the current row.
-                    selectable[0].focus();
-                    return;
-                } else if (nextRowIndex === rows.length) {
-                    // User wants to tab out behind the form area, just behave normally
-                    return;
-                }
+                let nextRowIndex = curRowIndex;
+                do {
+                    nextRowIndex += direction;
+
+                    if (nextRowIndex === -1) {
+                        // User wants to tab out in front of the form area
+                        // To correctly select the first element in front of the form,
+                        // select the first element tracked by this.
+                        // Just giving back control to the browser here doesn't work, because
+                        // it would navigate backwards through the controls of the current row.
+                        selectable[0].focus();
+                        return;
+                    } else if (nextRowIndex === rows.length) {
+                        // User wants to tab out behind the form area
+                        selectable[selectable.length - 1].focus();
+                        return;
+                    }
+                } while(isCollapsed(rows[nextRowIndex]));
+                const nextRow = rows[nextRowIndex];
 
                 e.preventDefault();
                 let nextElement;
-                const nextRow = rows[nextRowIndex];
-                const alreadySelectedElement = nextRow.querySelector("textarea, .active .tab-selectable");
+                const alreadySelectedElement = nextRow.querySelector(".active .tab-selectable");
 
                 if (alreadySelectedElement) {
                     nextElement = alreadySelectedElement;
