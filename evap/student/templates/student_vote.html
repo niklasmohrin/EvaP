@@ -341,7 +341,10 @@
 
             function isCollapsed(el) {
                 const container = el.closest(".collapse");
-                return container && (!container.classList.contains("show") || isCollapsed(container));
+                return container && (
+                       !container.classList.contains("show")
+                    || (container.parent && isCollapsed(container.parent))
+                );
             }
 
             function selectByNumberKey(row, num) {
