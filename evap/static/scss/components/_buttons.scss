@@ -199,6 +199,11 @@ a:not([href]):not(.disabled) {
     }
 }
 
+textarea.tab-selectable:focus, textarea.tab-selectable.focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(49, 112, 143, 0.5);
+}
+
 @include media-breakpoint-up(md) {
     .vote-btn {
         margin-top: 0;
