@@ -733,7 +733,7 @@ class TestSemesterPreparationReminderView(WebTestStaffModeWith200Check):
         evaluation = baker.make(
             Evaluation,
             course=baker.make(Course, semester=self.semester, responsibles=[user]),
-            state='prepared',
+            state=Evaluation.State.PREPARED,
             name_en='name_to_find',
             name_de='name_to_find',
         )
@@ -752,7 +752,7 @@ class TestSemesterPreparationReminderView(WebTestStaffModeWith200Check):
     @patch("evap.staff.views.EmailTemplate")
     def test_remind_all(self, email_template_mock):
         user = baker.make(UserProfile)
-        evaluation = baker.make(Evaluation, course=baker.make(Course, semester=self.semester, responsibles=[user]), state='prepared')
+        evaluation = baker.make(Evaluation, course=baker.make(Course, semester=self.semester, responsibles=[user]), state=Evaluation.State.PREPARED)
 
         email_template_mock.objects.get.return_value = email_template_mock
         email_template_mock.EDITOR_REVIEW_REMINDER = EmailTemplate.EDITOR_REVIEW_REMINDER
@@ -779,7 +779,7 @@ class TestSendReminderView(WebTestStaffMode):
         baker.make(
             Evaluation,
             course=baker.make(Course, semester=cls.semester, responsibles=[responsible]),
-            state='prepared',
+            state=Evaluation.State.PREPARED,
         )
 
     def test_form(self):
@@ -1192,7 +1192,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
         )
 
     def test_semester_reset_1(self):
-        evaluation = baker.make(Evaluation, course=self.course, state='prepared')
+        evaluation = baker.make(Evaluation, course=self.course, state=Evaluation.State.PREPARED)
         self.helper_semester_state_views(evaluation, "prepared", "new")
 
     def test_semester_reset_2(self):
@@ -1234,7 +1234,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
         form.submit()
 
         evaluation = Evaluation.objects.get(pk=evaluation.pk)
-        self.assertEqual(evaluation.state, 'prepared')
+        self.assertEqual(evaluation.state, Evaluation.State.PREPARED)
 
     def submit_operation_prepare_form(self, url_options):
         actual_emails = []

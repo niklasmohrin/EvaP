@@ -535,7 +535,7 @@ class Evaluation(LoggedModel):
 
     @property
     def can_be_edited_by_manager(self):
-        return not self.participations_are_archived and self.state in ['new', 'prepared', 'editor_approved', 'approved', 'in_evaluation', Evaluation.State.EVALUATED, 'reviewed']
+        return not self.participations_are_archived and self.state in ['new', Evaluation.State.PREPARED, 'editor_approved', 'approved', 'in_evaluation', Evaluation.State.EVALUATED, 'reviewed']
 
     @property
     def can_be_deleted_by_manager(self):

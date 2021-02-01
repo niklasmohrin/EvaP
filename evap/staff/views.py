@@ -141,7 +141,7 @@ def semester_view(request, semester_id):
         num_evaluations=len(evaluations),
         degree_stats=degree_stats,
         courses=courses,
-        approval_states=['new', 'prepared', 'editor_approved', 'approved'],
+        approval_states=['new', Evaluation.State.PREPARED, 'editor_approved', 'approved'],
     )
     return render(request, "staff_semester_view.html", template_data)
 
@@ -170,7 +170,7 @@ class RevertToNewOperation(EvaluationOperation):
 
     @staticmethod
     def applicable_to(evaluation):
-        return evaluation.state in ['prepared', 'editor_approved', 'approved']
+        return evaluation.state in [Evaluation.State.PREPARED, 'editor_approved', 'approved']
 
     @staticmethod
     def warning_for_inapplicables(amount):
@@ -314,7 +314,7 @@ class PublishOperation(EvaluationOperation):
 
 EVALUATION_OPERATIONS = {
         'new': RevertToNewOperation,
-        'prepared': ReadyForEditorsOperation,
+        Evaluation.State.PREPARED: ReadyForEditorsOperation,
         'in_evaluation': BeginEvaluationOperation,
         'reviewed': UnpublishOperation,
         'published': PublishOperation,
@@ -593,9 +593,9 @@ def semester_questionnaire_assign(request, semester_id):
 def semester_preparation_reminder(request, semester_id):
     semester = get_object_or_404(Semester, id=semester_id)
 
-    evaluations = semester.evaluations.filter(state__in=['prepared', 'editor_approved']).prefetch_related("course__degrees")
+    evaluations = semester.evaluations.filter(state__in=[Evaluation.State.PREPARED, 'editor_approved']).prefetch_related("course__degrees")
 
-    prepared_evaluations = semester.evaluations.filter(state__in=['prepared'])
+    prepared_evaluations = semester.evaluations.filter(state__in=[Evaluation.State.PREPARED])
     responsibles = list(set(responsible for evaluation in prepared_evaluations for responsible in evaluation.course.responsibles.all()))
     responsibles.sort(key=lambda responsible: (responsible.last_name, responsible.first_name))
 
@@ -644,7 +644,7 @@ def send_reminder(request, semester_id, responsible_id):
 
     form = RemindResponsibleForm(request.POST or None, responsible=responsible)
 
-    evaluations = Evaluation.objects.filter(state='prepared', course__responsibles__in=[responsible])
+    evaluations = Evaluation.objects.filter(state=Evaluation.State.PREPARED, course__responsibles__in=[responsible])
 
     if form.is_valid():
         form.send(request, evaluations)
