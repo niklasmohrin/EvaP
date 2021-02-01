@@ -56,7 +56,7 @@ class TestEvaluations(WebTest):
         Evaluation.update_evaluations()
 
         evaluation = Evaluation.objects.get(pk=evaluation.pk)
-        self.assertEqual(evaluation.state, 'reviewed')
+        self.assertEqual(evaluation.state, Evaluation.State.REVIEWED)
 
     def test_in_evaluation_to_published(self):
         # Evaluation is "fully reviewed" and not graded, thus gets published immediately.
@@ -223,7 +223,7 @@ class TestEvaluations(WebTest):
 
     def test_textanswers_get_deleted_if_they_cannot_be_published(self):
         student = baker.make(UserProfile)
-        evaluation = baker.make(Evaluation, state='reviewed', participants=[student], voters=[student], can_publish_text_results=False)
+        evaluation = baker.make(Evaluation, state=Evaluation.State.REVIEWED, participants=[student], voters=[student], can_publish_text_results=False)
         questionnaire = baker.make(Questionnaire, type=Questionnaire.Type.TOP)
         question = baker.make(Question, type=Question.TEXT, questionnaire=questionnaire)
         evaluation.general_contribution.questionnaires.set([questionnaire])
@@ -236,7 +236,7 @@ class TestEvaluations(WebTest):
     def test_textanswers_do_not_get_deleted_if_they_can_be_published(self):
         student = baker.make(UserProfile)
         student2 = baker.make(UserProfile)
-        evaluation = baker.make(Evaluation, state='reviewed', participants=[student, student2], voters=[student, student2], can_publish_text_results=True)
+        evaluation = baker.make(Evaluation, state=Evaluation.State.REVIEWED, participants=[student, student2], voters=[student, student2], can_publish_text_results=True)
         questionnaire = baker.make(Questionnaire, type=Questionnaire.Type.TOP)
         question = baker.make(Question, type=Question.TEXT, questionnaire=questionnaire)
         evaluation.general_contribution.questionnaires.set([questionnaire])
@@ -249,7 +249,7 @@ class TestEvaluations(WebTest):
     def test_hidden_textanswers_get_deleted_on_publish(self):
         student = baker.make(UserProfile)
         student2 = baker.make(UserProfile)
-        evaluation = baker.make(Evaluation, state='reviewed', participants=[student, student2], voters=[student, student2], can_publish_text_results=True)
+        evaluation = baker.make(Evaluation, state=Evaluation.State.REVIEWED, participants=[student, student2], voters=[student, student2], can_publish_text_results=True)
         questionnaire = baker.make(Questionnaire, type=Questionnaire.Type.TOP)
         question = baker.make(Question, type=Question.TEXT, questionnaire=questionnaire)
         evaluation.general_contribution.questionnaires.set([questionnaire])
@@ -265,7 +265,7 @@ class TestEvaluations(WebTest):
     def test_original_textanswers_get_deleted_on_publish(self):
         student = baker.make(UserProfile)
         student2 = baker.make(UserProfile)
-        evaluation = baker.make(Evaluation, state='reviewed', participants=[student, student2], voters=[student, student2], can_publish_text_results=True)
+        evaluation = baker.make(Evaluation, state=Evaluation.State.REVIEWED, participants=[student, student2], voters=[student, student2], can_publish_text_results=True)
         questionnaire = baker.make(Questionnaire, type=Questionnaire.Type.TOP)
         question = baker.make(Question, type=Question.TEXT, questionnaire=questionnaire)
         evaluation.general_contribution.questionnaires.set([questionnaire])
@@ -279,7 +279,7 @@ class TestEvaluations(WebTest):
 
     def test_publishing_and_unpublishing_effect_on_template_cache(self):
         student = baker.make(UserProfile)
-        evaluation = baker.make(Evaluation, state='reviewed', participants=[student], voters=[student], can_publish_text_results=True)
+        evaluation = baker.make(Evaluation, state=Evaluation.State.REVIEWED, participants=[student], voters=[student], can_publish_text_results=True)
 
         self.assertIsNone(caches['results'].get(get_evaluation_result_template_fragment_cache_key(evaluation.id, "en", True)))
         self.assertIsNone(caches['results'].get(get_evaluation_result_template_fragment_cache_key(evaluation.id, "en", False)))

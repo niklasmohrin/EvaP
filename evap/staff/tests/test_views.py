@@ -1130,7 +1130,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
         participant2 = baker.make(UserProfile, email="bar@example.com")
         contributor1 = baker.make(UserProfile, email="contributor@example.com")
 
-        evaluation = baker.make(Evaluation, course=self.course, state='reviewed',
+        evaluation = baker.make(Evaluation, course=self.course, state=Evaluation.State.REVIEWED,
                                 participants=[participant1, participant2], voters=[participant1, participant2])
         baker.make(Contribution, contributor=contributor1, evaluation=evaluation)
         cache_results(evaluation)
@@ -1178,7 +1178,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
         evaluation = baker.make(
             Evaluation,
             course=self.course,
-            state='reviewed',
+            state=Evaluation.State.REVIEWED,
             participants=[participant1, participant2],
             voters=[participant1, participant2]
         )

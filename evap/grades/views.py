@@ -77,7 +77,7 @@ def course_view(request, semester_id, course_id):
 
 def on_grading_process_finished(course):
     evaluations = course.evaluations.all()
-    if all(evaluation.state == 'reviewed' for evaluation in evaluations):
+    if all(evaluation.state == Evaluation.State.REVIEWED for evaluation in evaluations):
         for evaluation in evaluations:
             assert evaluation.grading_process_is_finished
         for evaluation in evaluations:

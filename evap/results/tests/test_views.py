@@ -264,7 +264,7 @@ class TestResultsSemesterEvaluationDetailView(WebTestStaffMode):
 
     def test_wrong_state(self):
         helper_exit_staff_mode(self)
-        evaluation = baker.make(Evaluation, state='reviewed', course=baker.make(Course, semester=self.semester))
+        evaluation = baker.make(Evaluation, state=Evaluation.State.REVIEWED, course=baker.make(Course, semester=self.semester))
         cache_results(evaluation)
         url = '/results/semester/%s/evaluation/%s' % (self.semester.id, evaluation.id)
         self.app.get(url, user="student@institution.example.com", status=403)
