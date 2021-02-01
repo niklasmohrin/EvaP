@@ -201,7 +201,7 @@ class TestContributorEvaluationEditView(WebTest):
 
         form.submit(name="operation", value="approve")
         self.evaluation = Evaluation.objects.get(pk=self.evaluation.pk)
-        self.assertEqual(self.evaluation.state, "editor_approved")
+        self.assertEqual(self.evaluation.state, Evaluation.State.EDITOR_APPROVED)
 
         # test what happens if the operation is not specified correctly
         response = form.submit(expect_errors=True)

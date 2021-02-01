@@ -7,7 +7,7 @@ def rename(apps, _schema_editor):
     Course = apps.get_model('evaluation', 'Course')
 
     Course.objects.filter(state='inEvaluation').update(state="in_evaluation")
-    Course.objects.filter(state='editorApproved').update(state="editor_approved")
+    Course.objects.filter(state='editorApproved').update(state=Evaluation.State.EDITOR_APPROVED)
 
 
 def revert_rename(apps, _schema_editor):
