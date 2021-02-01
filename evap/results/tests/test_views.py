@@ -270,13 +270,13 @@ class TestResultsSemesterEvaluationDetailView(WebTestStaffMode):
         self.app.get(url, user="student@institution.example.com", status=403)
 
     def test_preview_without_rating_answers(self):
-        evaluation = baker.make(Evaluation, state='evaluated', course=baker.make(Course, semester=self.semester))
+        evaluation = baker.make(Evaluation, state=Evaluation.State.EVALUATED, course=baker.make(Course, semester=self.semester))
         cache_results(evaluation)
         url = f'/results/semester/{self.semester.id}/evaluation/{evaluation.id}'
         self.app.get(url, user=self.manager)
 
     def test_preview_with_rating_answers(self):
-        evaluation = baker.make(Evaluation, state='evaluated', course=baker.make(Course, semester=self.semester))
+        evaluation = baker.make(Evaluation, state=Evaluation.State.EVALUATED, course=baker.make(Course, semester=self.semester))
         questionnaire = baker.make(Questionnaire, type=Questionnaire.Type.TOP)
         likert_question = baker.make(Question, type=Question.LIKERT, questionnaire=questionnaire, order=1)
         evaluation.general_contribution.questionnaires.set([questionnaire])

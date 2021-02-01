@@ -119,12 +119,12 @@ def semester_view(request, semester_id):
         stats_objects = [degree_stats[degree] for degree in degrees]
         stats_objects += [total_stats]
         for stats in stats_objects:
-            if evaluation.state in ['in_evaluation', 'evaluated', 'reviewed', 'published']:
+            if evaluation.state >= Evaluation.State.IN_EVALUATION:
                 stats.num_enrollments_in_evaluation += evaluation.num_participants
                 stats.num_votes += evaluation.num_voters
                 stats.num_textanswers += evaluation.num_textanswers
                 stats.num_textanswers_reviewed += evaluation.num_reviewed_textanswers
-            if evaluation.state in ['evaluated', 'reviewed', 'published']:
+            if evaluation.state Evaluation.State.EVALUATED:
                 stats.num_evaluations_evaluated += 1
             if evaluation.state != 'new':
                 stats.num_evaluations += 1
@@ -620,7 +620,7 @@ def semester_grade_reminder(request, semester_id):
     semester = get_object_or_404(Semester, id=semester_id)
 
     courses = semester.courses.filter(
-        evaluations__state__in=['evaluated', 'reviewed', 'published'],
+        evaluations__state__gte=Evaluation.State.EVALUATED,
         evaluations__wait_for_grade_upload_before_publishing=True,
         gets_no_grade_documents=False
     ).distinct()
@@ -890,7 +890,7 @@ def helper_evaluation_edit(request, semester, evaluation):
         if not evaluation.can_be_edited_by_manager or evaluation.participations_are_archived:
             raise SuspiciousOperation("Modifying this evaluation is not allowed.")
 
-        if evaluation.state in ['evaluated', 'reviewed'] and evaluation.is_in_evaluation_period:
+        if Evaluation.State.EVALUATED <= evaluation.state <= Evaluation.State.REVIEWED and evaluation.is_in_evaluation_period:
             evaluation.reopen_evaluation()
 
         form_has_changed = evaluation_form.has_changed() or formset.has_changed()
