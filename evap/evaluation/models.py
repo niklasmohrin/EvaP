@@ -785,7 +785,7 @@ class Evaluation(LoggedModel):
 
         for evaluation in cls.objects.all():
             try:
-                if evaluation.state == "approved" and evaluation.vote_start_datetime <= datetime.now():
+                if evaluation.state == Evaluation.State.APPROVED and evaluation.vote_start_datetime <= datetime.now():
                     evaluation.begin_evaluation()
                     evaluation.save()
                     evaluations_new_in_evaluation.append(evaluation)

@@ -1197,7 +1197,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
 
     def test_semester_reset_2(self):
         evaluation = baker.make(Evaluation, course=self.course, state=Evaluation.State.APPROVED)
-        self.helper_semester_state_views(evaluation, "approved", Evaluation.State.NEW)
+        self.helper_semester_state_views(evaluation, Evaluation.State.APPROVED, Evaluation.State.NEW)
 
     def test_semester_contributor_ready_1(self):
         evaluation = baker.make(Evaluation, course=self.course, state=Evaluation.State.NEW)
