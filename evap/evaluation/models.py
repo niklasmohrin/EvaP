@@ -758,7 +758,7 @@ class Evaluation(LoggedModel):
         if self.num_textanswers == self.num_reviewed_textanswers:
             return self.TextAnswerReviewState.REVIEWED
 
-        if self.state != "evaluated":
+        if self.state != Evaluation.State.EVALUATED:
             return self.TextAnswerReviewState.REVIEW_NEEDED
 
         if self.grading_process_is_finished:

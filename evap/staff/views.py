@@ -1161,7 +1161,7 @@ def evaluation_textanswers_update_publish(request):
         return HttpResponse(status=400)  # 400 Bad Request
     answer.save()
 
-    if evaluation.state == "evaluated" and evaluation.is_fully_reviewed:
+    if evaluation.state == Evaluation.State.EVALUATED and evaluation.is_fully_reviewed:
         evaluation.end_review()
         evaluation.save()
     if evaluation.state == "reviewed" and not evaluation.is_fully_reviewed:
