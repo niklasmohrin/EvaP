@@ -10,7 +10,7 @@ from evap.evaluation.models import CHOICES, NO_ANSWER, Contribution, Question,\
         Evaluation
 
 
-STATES_WITH_RESULTS_CACHING = {'evaluated', 'reviewed', 'published'}
+STATES_WITH_RESULTS_CACHING = {Evaluation.State.EVALUATED, 'reviewed', 'published'}
 STATES_WITH_RESULT_TEMPLATE_CACHING = {'published'}
 
 
@@ -273,7 +273,7 @@ def get_evaluations_with_course_result_attributes(evaluations):
 
 
 def calculate_average_distribution(evaluation):
-    assert evaluation.state in {'in_evaluation', 'evaluated', 'reviewed', 'published'}
+    assert evaluation.state in {'in_evaluation', Evaluation.State.EVALUATED, 'reviewed', 'published'}
 
     if not evaluation.can_staff_see_average_grade or not evaluation.can_publish_average_grade:
         return None

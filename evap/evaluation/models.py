@@ -337,7 +337,7 @@ class Course(LoggedModel):
 
     @property
     def all_evaluations_finished(self):
-        return not self.evaluations.exclude(state__in=['evaluated', 'reviewed', 'published']).exists()
+        return not self.evaluations.exclude(state__in=[Evaluation.State.EVALUATED, 'reviewed', 'published']).exists()
 
 
 class Evaluation(LoggedModel):
@@ -436,7 +436,7 @@ class Evaluation(LoggedModel):
             from evap.results.tools import STATES_WITH_RESULTS_CACHING, STATES_WITH_RESULT_TEMPLATE_CACHING
 
             if (state_changed_to(self, STATES_WITH_RESULTS_CACHING)
-                    or self.state_change_source == 'evaluated' and self.state == 'reviewed'): # reviewing changes results -> cache update required
+                    or self.state_change_source == Evaluation.State.EVALUATED and self.state == 'reviewed'): # reviewing changes results -> cache update required
                 from evap.results.tools import cache_results
                 cache_results(self)
             elif state_changed_from(self, STATES_WITH_RESULTS_CACHING):
@@ -535,7 +535,7 @@ class Evaluation(LoggedModel):
 
     @property
     def can_be_edited_by_manager(self):
-        return not self.participations_are_archived and self.state in ['new', 'prepared', 'editor_approved', 'approved', 'in_evaluation', 'evaluated', 'reviewed']
+        return not self.participations_are_archived and self.state in ['new', 'prepared', 'editor_approved', 'approved', 'in_evaluation', Evaluation.State.EVALUATED, 'reviewed']
 
     @property
     def can_be_deleted_by_manager(self):
@@ -582,7 +582,7 @@ class Evaluation(LoggedModel):
 
     @property
     def can_staff_see_average_grade(self):
-        return self.state in {'evaluated', 'reviewed', 'published'}
+        return self.state in {Evaluation.State.EVALUATED, 'reviewed', 'published'}
 
     @property
     def can_publish_average_grade(self):

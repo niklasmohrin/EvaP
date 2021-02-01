@@ -46,7 +46,7 @@ class TestEvaluations(WebTest):
             Evaluation.update_evaluations()
 
         evaluation = Evaluation.objects.get(pk=evaluation.pk)
-        self.assertEqual(evaluation.state, 'evaluated')
+        self.assertEqual(evaluation.state, Evaluation.State.EVALUATED)
 
     def test_in_evaluation_to_reviewed(self):
         # Evaluation is "fully reviewed" as no open text answers are present by default.
