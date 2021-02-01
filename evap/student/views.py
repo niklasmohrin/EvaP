@@ -30,8 +30,8 @@ def index(request):
         .annotate(participates_in=Exists(Evaluation.objects.filter(id=OuterRef('id'), participants=request.user)))
         .annotate(voted_for=Exists(Evaluation.objects.filter(id=OuterRef('id'), voters=request.user)))
 
-        .filter(~Q(state="new"), course__evaluations__participants=request.user)
-        .exclude(state="new")
+        .filter(~Q(state=Evaluation.State.NEW), course__evaluations__participants=request.user)
+        .exclude(state=Evaluation.State.NEW)
         .prefetch_related(
             'course', 'course__semester', 'course__grade_documents', 'course__type',
             'course__evaluations', 'course__responsibles', 'course__degrees',

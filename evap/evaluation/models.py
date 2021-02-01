@@ -574,7 +574,7 @@ class Evaluation(LoggedModel):
 
     @property
     def participations_can_be_archived(self):
-        return not self.course.semester.participations_are_archived and self.state in ["new", "published"]
+        return not self.course.semester.participations_are_archived and self.state in [Evaluation.State.NEW, "published"]
 
     @property
     def has_external_participant(self):

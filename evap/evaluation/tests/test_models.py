@@ -433,7 +433,7 @@ class TestUserProfile(TestCase):
 
     def test_can_be_deleted_by_manager(self):
         user = baker.make(UserProfile)
-        baker.make(Evaluation, participants=[user], state="new")
+        baker.make(Evaluation, participants=[user], state=Evaluation.State.NEW)
         self.assertFalse(user.can_be_deleted_by_manager)
 
         user2 = baker.make(UserProfile)
@@ -463,7 +463,7 @@ class TestUserProfile(TestCase):
 
     def test_can_be_marked_inactive_by_manager(self):
         user = baker.make(UserProfile)
-        evaluation = baker.make(Evaluation, state="new")
+        evaluation = baker.make(Evaluation, state=Evaluation.State.NEW)
         self.assertTrue(user.can_be_marked_inactive_by_manager)
         evaluation.participants.set([user])
         evaluation.save()
