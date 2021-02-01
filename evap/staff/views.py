@@ -313,11 +313,11 @@ class PublishOperation(EvaluationOperation):
 
 
 EVALUATION_OPERATIONS = {
-        'new': RevertToNewOperation,
-        Evaluation.State.PREPARED: ReadyForEditorsOperation,
-        Evaluation.State.IN_EVALUATION: BeginEvaluationOperation,
-        Evaluation.State.REVIEWED: UnpublishOperation,
-        Evaluation.State.PUBLISHED: PublishOperation,
+    'new': RevertToNewOperation,
+    'prepared': ReadyForEditorsOperation,
+    'in_evaluation': BeginEvaluationOperation,
+    'reviewed': UnpublishOperation,
+    'published': PublishOperation,
 }
 
 

@@ -1194,7 +1194,7 @@ class TextAnswer(Answer):
 
     class State(models.TextChoices):
         HIDDEN = 'HI', _('hidden')
-        PUBLISHED = 'PU', _(Evaluation.State.PUBLISHED)
+        PUBLISHED = 'PU', _('published')
         PRIVATE = 'PR', _('private')
         NOT_REVIEWED = 'NR', _('not reviewed')
 
