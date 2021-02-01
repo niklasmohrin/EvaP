@@ -124,7 +124,7 @@ def semester_view(request, semester_id):
                 stats.num_votes += evaluation.num_voters
                 stats.num_textanswers += evaluation.num_textanswers
                 stats.num_textanswers_reviewed += evaluation.num_reviewed_textanswers
-            if evaluation.state Evaluation.State.EVALUATED:
+            if evaluation.state >= Evaluation.State.EVALUATED:
                 stats.num_evaluations_evaluated += 1
             if evaluation.state != 'new':
                 stats.num_evaluations += 1
