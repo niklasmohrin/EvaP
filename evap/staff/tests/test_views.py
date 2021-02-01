@@ -626,7 +626,7 @@ class TestSemesterDeleteView(WebTestStaffMode):
         baker.make(
             Evaluation,
             course=baker.make(Course, semester=semester),
-            state='in_evaluation',
+            state=Evaluation.State.IN_EVALUATION,
             voters=[baker.make(UserProfile)],
         )
         self.assertFalse(semester.can_be_deleted_by_manager)
@@ -1222,7 +1222,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
         form.submit()
 
         evaluation = Evaluation.objects.get(pk=evaluation.pk)
-        self.assertEqual(evaluation.state, 'in_evaluation')
+        self.assertEqual(evaluation.state, Evaluation.State.IN_EVALUATION)
 
     def test_operation_prepare(self):
         evaluation = baker.make(Evaluation, state='new', course=self.course)
@@ -2120,7 +2120,7 @@ class TestQuestionnaireEditView(WebTestStaffModeWith200Check):
         cls.manager = make_manager()
         cls.test_users = [cls.manager]
 
-        evaluation = baker.make(Evaluation, state='in_evaluation')
+        evaluation = baker.make(Evaluation, state=Evaluation.State.IN_EVALUATION)
         cls.questionnaire = baker.make(Questionnaire, id=2)
         baker.make(Contribution, questionnaires=[cls.questionnaire], evaluation=evaluation)
 

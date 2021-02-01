@@ -26,7 +26,7 @@ class TestCalculateResults(TestCase):
         self.assertIsNotNone(caches['results'].get(get_results_cache_key(evaluation)))
 
     def test_caching_lifecycle(self):
-        evaluation = baker.make(Evaluation, state='in_evaluation')
+        evaluation = baker.make(Evaluation, state=Evaluation.State.IN_EVALUATION)
 
         self.assertIsNone(caches['results'].get(get_results_cache_key(evaluation)))
 
@@ -41,7 +41,7 @@ class TestCalculateResults(TestCase):
         self.assertIsNone(caches['results'].get(get_results_cache_key(evaluation)))
 
     def test_caching_works_after_multiple_transitions(self):
-        evaluation = baker.make(Evaluation, state='in_evaluation')
+        evaluation = baker.make(Evaluation, state=Evaluation.State.IN_EVALUATION)
 
         self.assertIsNone(caches['results'].get(get_results_cache_key(evaluation)))
 

@@ -535,7 +535,7 @@ class Evaluation(LoggedModel):
 
     @property
     def can_be_edited_by_manager(self):
-        return not self.participations_are_archived and self.state in ['new', Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, Evaluation.State.APPROVED, 'in_evaluation', Evaluation.State.EVALUATED, 'reviewed']
+        return not self.participations_are_archived and self.state in ['new', Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, Evaluation.State.APPROVED, Evaluation.State.IN_EVALUATION, Evaluation.State.EVALUATED, 'reviewed']
 
     @property
     def can_be_deleted_by_manager(self):
@@ -1515,7 +1515,7 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
 
     def get_sorted_due_evaluations(self):
         due_evaluations = dict()
-        for evaluation in Evaluation.objects.filter(participants=self, state='in_evaluation').exclude(voters=self):
+        for evaluation in Evaluation.objects.filter(participants=self, state=Evaluation.State.IN_EVALUATION).exclude(voters=self):
             due_evaluations[evaluation] = (evaluation.vote_end_date - date.today()).days
 
         # Sort evaluations by number of days left for evaluation and bring them to following format:

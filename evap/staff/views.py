@@ -315,7 +315,7 @@ class PublishOperation(EvaluationOperation):
 EVALUATION_OPERATIONS = {
         'new': RevertToNewOperation,
         Evaluation.State.PREPARED: ReadyForEditorsOperation,
-        'in_evaluation': BeginEvaluationOperation,
+        Evaluation.State.IN_EVALUATION: BeginEvaluationOperation,
         'reviewed': UnpublishOperation,
         'published': PublishOperation,
 }

@@ -76,7 +76,7 @@ def index(request):
 
     unfinished_evaluations_query = (
         Evaluation.objects
-        .filter(participants=request.user, state__in=[Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, Evaluation.State.APPROVED, 'in_evaluation'])
+        .filter(participants=request.user, state__in=[Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, Evaluation.State.APPROVED, Evaluation.State.IN_EVALUATION])
         .exclude(voters=request.user)
         .prefetch_related('course__responsibles', 'course__type', 'course__semester')
     )
@@ -88,8 +88,8 @@ def index(request):
     # evaluations in other (visible) states follow by name
     def sorter(evaluation):
         return (
-            evaluation.state != 'in_evaluation',
-            evaluation.vote_end_date if evaluation.state == 'in_evaluation' else None,
+            evaluation.state != Evaluation.State.IN_EVALUATION,
+            evaluation.vote_end_date if evaluation.state == Evaluation.State.IN_EVALUATION else None,
             evaluation.full_name
         )
     unfinished_evaluations.sort(key=sorter)

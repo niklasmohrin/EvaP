@@ -301,7 +301,7 @@ class TestResultsSemesterEvaluationDetailViewFewVoters(WebTest):
         students = baker.make(UserProfile, _quantity=10)
         students.extend([cls.student1, cls.student2])
 
-        cls.evaluation = baker.make(Evaluation, id=22, state='in_evaluation', course=baker.make(Course, semester=cls.semester), participants=students)
+        cls.evaluation = baker.make(Evaluation, id=22, state=Evaluation.State.IN_EVALUATION, course=baker.make(Course, semester=cls.semester), participants=students)
         questionnaire = baker.make(Questionnaire)
         cls.question_grade = baker.make(Question, questionnaire=questionnaire, type=Question.GRADE)
         baker.make(Question, questionnaire=questionnaire, type=Question.LIKERT)

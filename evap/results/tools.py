@@ -138,9 +138,9 @@ def cache_results(evaluation):
 
 
 def get_results(evaluation):
-    assert evaluation.state in STATES_WITH_RESULTS_CACHING | {'in_evaluation'}
+    assert evaluation.state in STATES_WITH_RESULTS_CACHING | {Evaluation.State.IN_EVALUATION}
 
-    if evaluation.state == 'in_evaluation':
+    if evaluation.state == Evaluation.State.IN_EVALUATION:
         return _get_results_impl(evaluation)
 
     cache_key = get_results_cache_key(evaluation)
@@ -273,7 +273,7 @@ def get_evaluations_with_course_result_attributes(evaluations):
 
 
 def calculate_average_distribution(evaluation):
-    assert evaluation.state in {'in_evaluation', Evaluation.State.EVALUATED, 'reviewed', 'published'}
+    assert evaluation.state in {Evaluation.State.IN_EVALUATION, Evaluation.State.EVALUATED, 'reviewed', 'published'}
 
     if not evaluation.can_staff_see_average_grade or not evaluation.can_publish_average_grade:
         return None

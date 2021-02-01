@@ -35,10 +35,10 @@ class TestEvaluations(WebTest):
         )
 
         evaluation = Evaluation.objects.get(pk=evaluation.pk)
-        self.assertEqual(evaluation.state, 'in_evaluation')
+        self.assertEqual(evaluation.state, Evaluation.State.IN_EVALUATION)
 
     def test_in_evaluation_to_evaluated(self):
-        evaluation = baker.make(Evaluation, state='in_evaluation', vote_start_datetime=datetime.now() - timedelta(days=2),
+        evaluation = baker.make(Evaluation, state=Evaluation.State.IN_EVALUATION, vote_start_datetime=datetime.now() - timedelta(days=2),
                             vote_end_date=date.today() - timedelta(days=1))
 
         with patch('evap.evaluation.models.Evaluation.is_fully_reviewed') as mock:
@@ -50,7 +50,7 @@ class TestEvaluations(WebTest):
 
     def test_in_evaluation_to_reviewed(self):
         # Evaluation is "fully reviewed" as no open text answers are present by default.
-        evaluation = baker.make(Evaluation, state='in_evaluation', vote_start_datetime=datetime.now() - timedelta(days=2),
+        evaluation = baker.make(Evaluation, state=Evaluation.State.IN_EVALUATION, vote_start_datetime=datetime.now() - timedelta(days=2),
                             vote_end_date=date.today() - timedelta(days=1))
 
         Evaluation.update_evaluations()
@@ -61,7 +61,7 @@ class TestEvaluations(WebTest):
     def test_in_evaluation_to_published(self):
         # Evaluation is "fully reviewed" and not graded, thus gets published immediately.
         course = baker.make(Course)
-        evaluation = baker.make(Evaluation, course=course, state='in_evaluation', vote_start_datetime=datetime.now() - timedelta(days=2),
+        evaluation = baker.make(Evaluation, course=course, state=Evaluation.State.IN_EVALUATION, vote_start_datetime=datetime.now() - timedelta(days=2),
                             vote_end_date=date.today() - timedelta(days=1), wait_for_grade_upload_before_publishing=False)
 
         with patch('evap.evaluation.models.EmailTemplate.send_participant_publish_notifications') as participant_mock,\
@@ -104,10 +104,10 @@ class TestEvaluations(WebTest):
         # Evaluation is out of evaluation period.
         course_1 = baker.make(Course)
         course_2 = baker.make(Course)
-        baker.make(Evaluation, course=course_1, state='in_evaluation', vote_start_datetime=datetime.now() - timedelta(days=2),
+        baker.make(Evaluation, course=course_1, state=Evaluation.State.IN_EVALUATION, vote_start_datetime=datetime.now() - timedelta(days=2),
                    vote_end_date=date.today() - timedelta(days=1), wait_for_grade_upload_before_publishing=False)
         # This evaluation is not.
-        baker.make(Evaluation, course=course_2, state='in_evaluation', vote_start_datetime=datetime.now() - timedelta(days=2),
+        baker.make(Evaluation, course=course_2, state=Evaluation.State.IN_EVALUATION, vote_start_datetime=datetime.now() - timedelta(days=2),
                    vote_end_date=date.today(), wait_for_grade_upload_before_publishing=False)
 
         with patch('evap.evaluation.models.Evaluation.end_evaluation') as mock:
@@ -124,7 +124,7 @@ class TestEvaluations(WebTest):
 
         evaluation = Evaluation.objects.get(pk=evaluation.pk)
         self.assertEqual(len(mail.outbox), 1)
-        self.assertEqual(evaluation.state, 'in_evaluation')
+        self.assertEqual(evaluation.state, Evaluation.State.IN_EVALUATION)
 
     def test_has_enough_questionnaires(self):
         # manually circumvent Evaluation's save() method to have a Evaluation without a general contribution

@@ -211,7 +211,7 @@ class TestSendRemindersCommand(TestCase):
         user_to_remind = baker.make(UserProfile)
         evaluation = baker.make(
             Evaluation,
-            state='in_evaluation',
+            state=Evaluation.State.IN_EVALUATION,
             vote_start_datetime=datetime.now() - timedelta(days=1),
             vote_end_date=date.today() + timedelta(days=2),
             participants=[user_to_remind])
@@ -226,13 +226,13 @@ class TestSendRemindersCommand(TestCase):
         user_to_remind = baker.make(UserProfile)
         evaluation1 = baker.make(
             Evaluation,
-            state='in_evaluation',
+            state=Evaluation.State.IN_EVALUATION,
             vote_start_datetime=datetime.now() - timedelta(days=1),
             vote_end_date=date.today() + timedelta(days=0),
             participants=[user_to_remind])
         evaluation2 = baker.make(
             Evaluation,
-            state='in_evaluation',
+            state=Evaluation.State.IN_EVALUATION,
             vote_start_datetime=datetime.now() - timedelta(days=1),
             vote_end_date=date.today() + timedelta(days=2),
             participants=[user_to_remind])
@@ -247,7 +247,7 @@ class TestSendRemindersCommand(TestCase):
         user_no_remind = baker.make(UserProfile)
         baker.make(
             Evaluation,
-            state='in_evaluation',
+            state=Evaluation.State.IN_EVALUATION,
             vote_start_datetime=datetime.now() - timedelta(days=1),
             vote_end_date=date.today() + timedelta(days=2),
             participants=[user_no_remind],
