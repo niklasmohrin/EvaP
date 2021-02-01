@@ -177,7 +177,7 @@ class TestReloadTestdataCommand(TestCase):
 
 class TestRefreshResultsCacheCommand(TestCase):
     def test_calls_cache_results(self):
-        baker.make(Evaluation, state='published')
+        baker.make(Evaluation, state=Evaluation.State.PUBLISHED)
 
         with patch('evap.evaluation.management.commands.refresh_results_cache.cache_results') as mock:
             management.call_command('refresh_results_cache', stdout=StringIO())

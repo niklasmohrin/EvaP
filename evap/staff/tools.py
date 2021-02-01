@@ -295,7 +295,7 @@ def merge_users(main_user, other_user, preview=False):
 
 def find_unreviewed_evaluations(semester, excluded):
     return semester.evaluations.exclude(pk__in=excluded) \
-        .exclude(state='published') \
+        .exclude(state=Evaluation.State.PUBLISHED) \
         .exclude(can_publish_text_results=False) \
         .filter(contributions__textanswer_set__state=TextAnswer.State.NOT_REVIEWED) \
         .annotate(num_unreviewed_textanswers=Count("contributions__textanswer_set")) \

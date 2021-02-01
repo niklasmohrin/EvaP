@@ -25,7 +25,7 @@ def index(request):
     show_delegated = get_parameter_from_url_or_session(request, "show_delegated", True)
 
     represented_proxy_users = user.represented_users.filter(is_proxy_user=True)
-    contributor_visible_states = [Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, Evaluation.State.APPROVED, Evaluation.State.IN_EVALUATION, Evaluation.State.EVALUATED, Evaluation.State.REVIEWED, 'published']
+    contributor_visible_states = [Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, Evaluation.State.APPROVED, Evaluation.State.IN_EVALUATION, Evaluation.State.EVALUATED, Evaluation.State.REVIEWED, Evaluation.State.PUBLISHED]
     own_courses = Course.objects.filter(
         Q(evaluations__state__in=contributor_visible_states) & (
             Q(responsibles=user) |

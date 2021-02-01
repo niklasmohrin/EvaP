@@ -645,7 +645,7 @@ class TestSemesterDeleteView(WebTestStaffMode):
     def test_success_if_archived(self):
         semester = baker.make(Semester)
         course = baker.make(Course, semester=semester)
-        evaluation = baker.make(Evaluation, course=course, state='published')
+        evaluation = baker.make(Evaluation, course=course, state=Evaluation.State.PUBLISHED)
         general_contribution = evaluation.general_contribution
         responsible_contribution = baker.make(Contribution, evaluation=evaluation, contributor=baker.make(UserProfile))
         textanswer = baker.make(TextAnswer, contribution=general_contribution, state='PU')
@@ -1208,7 +1208,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
         self.helper_semester_state_views(evaluation, "editor_approved", "prepared")
 
     def test_semester_unpublish(self):
-        evaluation = baker.make(Evaluation, course=self.course, state='published', _participant_count=0, _voter_count=0)
+        evaluation = baker.make(Evaluation, course=self.course, state=Evaluation.State.PUBLISHED, _participant_count=0, _voter_count=0)
         self.helper_semester_state_views(evaluation, "published", "reviewed")
 
     def test_operation_start_evaluation(self):

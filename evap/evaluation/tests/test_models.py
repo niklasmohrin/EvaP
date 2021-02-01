@@ -72,7 +72,7 @@ class TestEvaluations(WebTest):
         contributor_mock.assert_called_once_with([evaluation])
 
         evaluation = Evaluation.objects.get(pk=evaluation.pk)
-        self.assertEqual(evaluation.state, 'published')
+        self.assertEqual(evaluation.state, Evaluation.State.PUBLISHED)
 
     @override_settings(EVALUATION_END_WARNING_PERIOD=24)
     def test_ends_soon(self):

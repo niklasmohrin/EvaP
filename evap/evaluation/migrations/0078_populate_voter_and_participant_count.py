@@ -5,7 +5,7 @@ from django.db import migrations
 
 def populate_voter_and_participant_count(apps, _schema_editor):
     Course = apps.get_model('evaluation', 'Course')
-    for course in Course.objects.filter(state='published', semester__participations_are_archived=False, is_single_result=False):
+    for course in Course.objects.filter(state=Evaluation.State.PUBLISHED, semester__participations_are_archived=False, is_single_result=False):
         course._voter_count = course.voters.count()
         course._participant_count = course.participants.count()
         course.save()
@@ -13,7 +13,7 @@ def populate_voter_and_participant_count(apps, _schema_editor):
 
 def delete_voter_and_participant_count(apps, _schema_editor):
     Course = apps.get_model('evaluation', 'Course')
-    for course in Course.objects.filter(state='published', semester__participations_are_archived=False, is_single_result=False):
+    for course in Course.objects.filter(state=Evaluation.State.PUBLISHED, semester__participations_are_archived=False, is_single_result=False):
         course._voter_count = None
         course._participant_count = None
         course.save()

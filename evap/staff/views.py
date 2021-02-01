@@ -263,7 +263,7 @@ class UnpublishOperation(EvaluationOperation):
 
     @staticmethod
     def applicable_to(evaluation):
-        return evaluation.state == 'published'
+        return evaluation.state == Evaluation.State.PUBLISHED
 
     @staticmethod
     def warning_for_inapplicables(amount):
@@ -317,7 +317,7 @@ EVALUATION_OPERATIONS = {
         Evaluation.State.PREPARED: ReadyForEditorsOperation,
         Evaluation.State.IN_EVALUATION: BeginEvaluationOperation,
         Evaluation.State.REVIEWED: UnpublishOperation,
-        'published': PublishOperation,
+        Evaluation.State.PUBLISHED: PublishOperation,
 }
 
 

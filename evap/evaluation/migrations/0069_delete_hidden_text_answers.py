@@ -5,7 +5,7 @@ from django.db import migrations
 
 def delete_hidden_textanswers(apps, _schema_editor):
     TextAnswer = apps.get_model('evaluation', 'TextAnswer')
-    TextAnswer.objects.filter(contribution__course__state='published', state='HI').delete()
+    TextAnswer.objects.filter(contribution__course__state=Evaluation.State.PUBLISHED, state='HI').delete()
 
 
 class Migration(migrations.Migration):

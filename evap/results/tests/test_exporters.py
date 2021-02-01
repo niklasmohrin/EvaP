@@ -35,7 +35,7 @@ class TestExporters(TestCase):
         evaluation = baker.make(
             Evaluation,
             course=baker.make(Course, degrees=[degree]),
-            state='published',
+            state=Evaluation.State.PUBLISHED,
             _participant_count=2,
             _voter_count=2
         )
@@ -87,7 +87,7 @@ class TestExporters(TestCase):
         evaluation = baker.make(
             Evaluation,
             course=baker.make(Course, degrees=[degree]),
-            state='published',
+            state=Evaluation.State.PUBLISHED,
             _participant_count=2,
             _voter_count=2
         )
@@ -127,14 +127,14 @@ class TestExporters(TestCase):
         degree = baker.make(Degree)
         evaluation1 = baker.make(
             Evaluation,
-            state='published',
+            state=Evaluation.State.PUBLISHED,
             course=baker.make(Course, degrees=[degree], type=course_type, semester=semester, name_de="A", name_en="B"),
             name_de='Evaluation1',
             name_en='Evaluation1'
         )
         evaluation2 = baker.make(
             Evaluation,
-            state='published',
+            state=Evaluation.State.PUBLISHED,
             course=baker.make(Course, degrees=[degree], type=course_type, semester=semester, name_de="B", name_en="A"),
             name_de='Evaluation2',
             name_en='Evaluation2'
@@ -170,13 +170,13 @@ class TestExporters(TestCase):
         semester = baker.make(Semester)
         evaluation_1 = baker.make(Evaluation,
             course=baker.make(Course, semester=semester, degrees=[degree], type=course_type_1),
-            state='published',
+            state=Evaluation.State.PUBLISHED,
             _participant_count=2,
             _voter_count=2
         )
         evaluation_2 = baker.make(Evaluation,
             course=baker.make(Course, semester=semester, degrees=[degree], type=course_type_2),
-            state='published',
+            state=Evaluation.State.PUBLISHED,
             _participant_count=2,
             _voter_count=2
         )
@@ -431,14 +431,14 @@ class TestExporters(TestCase):
         evaluation_1 = baker.make(
             Evaluation,
             course=baker.make(Course, degrees=[degree], responsibles=[contributor]),
-            state='published',
+            state=Evaluation.State.PUBLISHED,
             _participant_count=10,
             _voter_count=1
         )
         evaluation_2 = baker.make(
             Evaluation,
             course=baker.make(Course, degrees=[degree], responsibles=[other_contributor]),
-            state='published',
+            state=Evaluation.State.PUBLISHED,
             _participant_count=2,
             _voter_count=2,
         )
@@ -484,7 +484,7 @@ class TestExporters(TestCase):
         self.assertEqual(workbook.sheets()[0].row_values(10)[2], 3.25)
 
     def test_text_answer_export(self):
-        evaluation = baker.make(Evaluation, state='published', can_publish_text_results=True)
+        evaluation = baker.make(Evaluation, state=Evaluation.State.PUBLISHED, can_publish_text_results=True)
         questions = [baker.make(Question, questionnaire__type=t, type=Question.TEXT) for t in Questionnaire.Type.values]
 
         for idx in [0, 1, 2, 2, 0]:

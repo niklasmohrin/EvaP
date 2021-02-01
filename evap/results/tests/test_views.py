@@ -37,13 +37,13 @@ class TestResultsView(WebTest):
         caches['results'].clear()
 
         # course with one evaluation is a single line with the evaluation's full_name
-        evaluation = baker.make(Evaluation, course=course, name_en='unique_evaluation_name1', name_de="foo", state='published')
+        evaluation = baker.make(Evaluation, course=course, name_en='unique_evaluation_name1', name_de="foo", state=Evaluation.State.PUBLISHED)
         page = self.app.get(self.url, user=student)
         self.assertContains(page, evaluation.full_name)
         caches['results'].clear()
 
         # course with two evaluations is three lines without using the full names
-        evaluation2 = baker.make(Evaluation, course=course, name_en='unique_evaluation_name2', name_de="bar", state='published')
+        evaluation2 = baker.make(Evaluation, course=course, name_en='unique_evaluation_name2', name_de="bar", state=Evaluation.State.PUBLISHED)
         page = self.app.get(self.url, user=student)
         self.assertContains(page, course.name)
         self.assertContains(page, evaluation.name_en)
@@ -71,8 +71,8 @@ class TestResultsView(WebTest):
 
         def make_course_with_evaluations(unique_suffix):
             course = baker.make(Course)
-            baker.make(Evaluation, course=course, name_en='foo' + unique_suffix, name_de='foo' + unique_suffix, state='published', _voter_count=0)
-            baker.make(Evaluation, course=course, name_en='bar' + unique_suffix, name_de='bar' + unique_suffix, state='published', _voter_count=0)
+            baker.make(Evaluation, course=course, name_en='foo' + unique_suffix, name_de='foo' + unique_suffix, state=Evaluation.State.PUBLISHED, _voter_count=0)
+            baker.make(Evaluation, course=course, name_en='bar' + unique_suffix, name_de='bar' + unique_suffix, state=Evaluation.State.PUBLISHED, _voter_count=0)
 
         # first measure the number of queries with two courses
         make_course_with_evaluations('frob')
@@ -103,7 +103,7 @@ class TestGetEvaluationsWithPrefetchedData(TestCase):
         participants = baker.make(UserProfile, _quantity=2)
         evaluation = baker.make(
             Evaluation,
-            state='published',
+            state=Evaluation.State.PUBLISHED,
             _participant_count=2,
             _voter_count=2,
             participants=participants,
@@ -134,7 +134,7 @@ class TestResultsViewContributionWarning(WebTest):
         cls.evaluation = baker.make(
             Evaluation,
             id=21,
-            state='published',
+            state=Evaluation.State.PUBLISHED,
             course=baker.make(Course, semester=cls.semester),
             participants=[student1, student2],
             voters=[student1, student2],
@@ -182,7 +182,7 @@ class TestResultsSemesterEvaluationDetailView(WebTestStaffMode):
         cls.test_users = [cls.manager, contributor, responsible]
 
         # Normal evaluation with responsible and contributor.
-        cls.evaluation = baker.make(Evaluation, id=21, state='published', course=baker.make(Course, semester=cls.semester))
+        cls.evaluation = baker.make(Evaluation, id=21, state=Evaluation.State.PUBLISHED, course=baker.make(Course, semester=cls.semester))
 
         baker.make(
             Contribution,
@@ -379,7 +379,7 @@ class TestResultsSemesterEvaluationDetailViewPrivateEvaluation(WebTest):
         private_evaluation = baker.make(
             Evaluation,
             course=course,
-            state='published',
+            state=Evaluation.State.PUBLISHED,
             participants=[student, student_external, voter1, voter2],
             voters=[voter1, voter2]
         )
@@ -590,7 +590,7 @@ class TestResultsOtherContributorsListOnExportView(WebTest):
     def setUpTestData(cls):
         cls.semester = baker.make(Semester, id=2)
         responsible = baker.make(UserProfile, email='responsible@institution.example.com')
-        cls.evaluation = baker.make(Evaluation, id=21, state='published', course=baker.make(Course, semester=cls.semester, responsibles=[responsible]))
+        cls.evaluation = baker.make(Evaluation, id=21, state=Evaluation.State.PUBLISHED, course=baker.make(Course, semester=cls.semester, responsibles=[responsible]))
 
         questionnaire = baker.make(Questionnaire)
         baker.make(Question, questionnaire=questionnaire, type=Question.LIKERT)
@@ -770,7 +770,7 @@ class TestArchivedResults(WebTest):
         cls.evaluation = baker.make(
             Evaluation,
             course=course,
-            state='published',
+            state=Evaluation.State.PUBLISHED,
             participants=[cls.student, cls.student_external],
             voters=[cls.student, cls.student_external],
         )
@@ -826,7 +826,7 @@ class TestTextAnswerExportView(WebTest):
             email="reviewer@institution.example.com",
             groups=[Group.objects.get(name="Reviewer")],
         )
-        evaluation = baker.make(Evaluation, state='published')
+        evaluation = baker.make(Evaluation, state=Evaluation.State.PUBLISHED)
         cache_results(evaluation)
 
         cls.url = f"/results/evaluation/{evaluation.id}/text_answers_export"

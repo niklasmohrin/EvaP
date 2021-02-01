@@ -262,7 +262,7 @@ class ResultsExporter(ExcelExporter):
             self.cur_row = 0
             self.cur_col = 0
 
-            evaluation_states = ['published']
+            evaluation_states = [Evaluation.State.PUBLISHED]
             if include_unpublished:
                 evaluation_states.extend([Evaluation.State.EVALUATED, Evaluation.State.REVIEWED])
 

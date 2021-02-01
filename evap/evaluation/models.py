@@ -337,7 +337,7 @@ class Course(LoggedModel):
 
     @property
     def all_evaluations_finished(self):
-        return not self.evaluations.exclude(state__in=[Evaluation.State.EVALUATED, Evaluation.State.REVIEWED, 'published']).exists()
+        return not self.evaluations.exclude(state__in=[Evaluation.State.EVALUATED, Evaluation.State.REVIEWED, Evaluation.State.PUBLISHED]).exists()
 
 
 class Evaluation(LoggedModel):
@@ -527,7 +527,7 @@ class Evaluation(LoggedModel):
             return True
         if user.is_reviewer and not self.course.semester.results_are_archived:
             return True
-        if self.state != 'published':
+        if self.state != Evaluation.State.PUBLISHED:
             return False
         if not self.can_publish_rating_results or self.course.semester.results_are_archived:
             return self.is_user_responsible_or_contributor_or_delegate(user)
@@ -582,7 +582,7 @@ class Evaluation(LoggedModel):
 
     @property
     def can_staff_see_average_grade(self):
-        return self.state in {Evaluation.State.EVALUATED, Evaluation.State.REVIEWED, 'published'}
+        return self.state in {Evaluation.State.EVALUATED, Evaluation.State.REVIEWED, Evaluation.State.PUBLISHED}
 
     @property
     def can_publish_average_grade(self):
@@ -1194,7 +1194,7 @@ class TextAnswer(Answer):
 
     class State(models.TextChoices):
         HIDDEN = 'HI', _('hidden')
-        PUBLISHED = 'PU', _('published')
+        PUBLISHED = 'PU', _(Evaluation.State.PUBLISHED)
         PRIVATE = 'PR', _('private')
         NOT_REVIEWED = 'NR', _('not reviewed')
 
