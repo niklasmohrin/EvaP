@@ -530,7 +530,7 @@ class TestSemesterView(WebTestStaffMode):
 
         evaluation = baker.make(
             Evaluation,
-            state="in_evaluation",
+            state=Evaluation.State.IN_EVALUATION,
             can_publish_text_results=True,
             course__semester=self.semester,
         )
@@ -1912,7 +1912,7 @@ class TestEvaluationTextAnswerView(WebTest):
             course=baker.make(Course, semester=semester),
             participants=[student1, cls.student2],
             voters=[student1],
-            state="in_evaluation"
+            state=Evaluation.State.IN_EVALUATION
         )
         top_general_questionnaire = baker.make(Questionnaire, type=Questionnaire.Type.TOP)
         baker.make(Question, questionnaire=top_general_questionnaire, type=Question.LIKERT)
@@ -1968,7 +1968,7 @@ class TestEvaluationTextAnswerEditView(WebTest):
             course=baker.make(Course, semester=semester),
             participants=[student1, cls.student2],
             voters=[student1],
-            state="in_evaluation"
+            state=Evaluation.State.IN_EVALUATION
         )
         top_general_questionnaire = baker.make(Questionnaire, type=Questionnaire.Type.TOP)
         baker.make(Question, questionnaire=top_general_questionnaire, type=Question.LIKERT)
@@ -2329,7 +2329,7 @@ class TestEvaluationTextAnswersUpdatePublishView(WebTest):
             Evaluation,
             participants=[cls.student1, cls.student2],
             voters=[cls.student1],
-            state="in_evaluation",
+            state=Evaluation.State.IN_EVALUATION,
         )
         top_general_questionnaire = baker.make(Questionnaire, type=Questionnaire.Type.TOP)
         baker.make(Question, questionnaire=top_general_questionnaire, type=Question.LIKERT)
@@ -2392,7 +2392,7 @@ class TestEvaluationTextAnswersSkip(WebTestStaffMode):
             Evaluation,
             participants=[],
             voters=[],
-            state="in_evaluation",
+            state=Evaluation.State.IN_EVALUATION,
             can_publish_text_results=True,
         )
 

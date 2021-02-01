@@ -208,7 +208,7 @@ class TestEvaluations(WebTest):
     def test_second_vote_sets_can_publish_text_results_to_true(self):
         student1 = baker.make(UserProfile, email="student1@institution.example.com")
         student2 = baker.make(UserProfile, email="student2@example.com")
-        evaluation = baker.make(Evaluation, participants=[student1, student2], voters=[student1], state="in_evaluation")
+        evaluation = baker.make(Evaluation, participants=[student1, student2], voters=[student1], state=Evaluation.State.IN_EVALUATION)
         evaluation.save()
         top_general_questionnaire = baker.make(Questionnaire, type=Questionnaire.Type.TOP)
         baker.make(Question, questionnaire=top_general_questionnaire, type=Question.LIKERT)
@@ -329,7 +329,7 @@ class TestEvaluations(WebTest):
     def test_textanswer_review_state(self):
         evaluation = baker.make(
             Evaluation,
-            state="in_evaluation",
+            state=Evaluation.State.IN_EVALUATION,
             can_publish_text_results=True,
             wait_for_grade_upload_before_publishing=False
         )
@@ -437,7 +437,7 @@ class TestUserProfile(TestCase):
         self.assertFalse(user.can_be_deleted_by_manager)
 
         user2 = baker.make(UserProfile)
-        baker.make(Evaluation, participants=[user2], state="in_evaluation")
+        baker.make(Evaluation, participants=[user2], state=Evaluation.State.IN_EVALUATION)
         self.assertFalse(user2.can_be_deleted_by_manager)
 
         contributor = baker.make(UserProfile)

@@ -504,7 +504,7 @@ class Evaluation(LoggedModel):
 
     def can_be_voted_for_by(self, user):
         """Returns whether the user is allowed to vote on this evaluation."""
-        return (self.state == "in_evaluation"
+        return (self.state == Evaluation.State.IN_EVALUATION
             and self.is_in_evaluation_period
             and user in self.participants.all()
             and user not in self.voters.all())
@@ -789,7 +789,7 @@ class Evaluation(LoggedModel):
                     evaluation.begin_evaluation()
                     evaluation.save()
                     evaluations_new_in_evaluation.append(evaluation)
-                elif evaluation.state == "in_evaluation" and datetime.now() >= evaluation.vote_end_datetime:
+                elif evaluation.state == Evaluation.State.IN_EVALUATION and datetime.now() >= evaluation.vote_end_datetime:
                     evaluation.end_evaluation()
                     if evaluation.is_fully_reviewed:
                         evaluation.end_review()
