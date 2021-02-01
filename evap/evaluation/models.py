@@ -22,7 +22,7 @@ from django.template.base import TemplateSyntaxError
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
-from django_fsm import FSMField, transition
+from django_fsm import FSMIntegerField, transition
 from django_fsm.signals import post_transition
 
 from evap.evaluation.models_logging import LoggedModel
@@ -342,7 +342,18 @@ class Course(LoggedModel):
 
 class Evaluation(LoggedModel):
     """Models a single evaluation, e.g. the exam evaluation of the Math 101 course of 2002."""
-    state = FSMField(default='new', protected=True)
+
+    class State:
+        NEW = 10
+        PREPARED = 20
+        EDITOR_APPROVED = 30
+        APPROVED = 40
+        IN_EVALUATION = 50
+        EVALUATED = 60
+        REVIEWED = 70
+        PUBLISHED = 80
+
+    state = FSMIntegerField(default=State.NEW, protected=True)
 
     course = models.ForeignKey(Course, models.PROTECT, verbose_name=_("course"), related_name="evaluations")
 
@@ -589,47 +600,47 @@ class Evaluation(LoggedModel):
         # the rating results are only published if at least the configured number of participants voted during the evaluation for anonymity reasons
         return self.num_voters >= settings.VOTER_COUNT_NEEDED_FOR_PUBLISHING_RATING_RESULTS
 
-    @transition(field=state, source=['new', 'editor_approved'], target='prepared')
+    @transition(field=state, source=[State.NEW, State.EDITOR_APPROVED], target=State.PREPARED)
     def ready_for_editors(self):
         pass
 
-    @transition(field=state, source='prepared', target='editor_approved')
+    @transition(field=state, source=State.PREPARED, target=State.EDITOR_APPROVED)
     def editor_approve(self):
         pass
 
-    @transition(field=state, source=['new', 'prepared', 'editor_approved'], target='approved', conditions=[lambda self: self.general_contribution_has_questionnaires])
+    @transition(field=state, source=[State.NEW, State.PREPARED, State.EDITOR_APPROVED], target=State.APPROVED, conditions=[lambda self: self.general_contribution_has_questionnaires])
     def manager_approve(self):
         pass
 
-    @transition(field=state, source=['prepared', 'editor_approved', 'approved'], target='new')
+    @transition(field=state, source=[State.PREPARED, State.EDITOR_APPROVED, State.APPROVED], target=State.NEW)
     def revert_to_new(self):
         pass
 
-    @transition(field=state, source='approved', target='in_evaluation', conditions=[lambda self: self.is_in_evaluation_period])
+    @transition(field=state, source=State.APPROVED, target=State.IN_EVALUATION, conditions=[lambda self: self.is_in_evaluation_period])
     def begin_evaluation(self):
         pass
 
-    @transition(field=state, source=['evaluated', 'reviewed'], target='in_evaluation', conditions=[lambda self: self.is_in_evaluation_period])
+    @transition(field=state, source=[State.EVALUATED, State.REVIEWED], target=State.IN_EVALUATION, conditions=[lambda self: self.is_in_evaluation_period])
     def reopen_evaluation(self):
         pass
 
-    @transition(field=state, source='in_evaluation', target='evaluated')
+    @transition(field=state, source=State.IN_EVALUATION, target=State.EVALUATED)
     def end_evaluation(self):
         pass
 
-    @transition(field=state, source='evaluated', target='reviewed', conditions=[lambda self: self.is_fully_reviewed])
+    @transition(field=state, source=State.EVALUATED, target=State.REVIEWED, conditions=[lambda self: self.is_fully_reviewed])
     def end_review(self):
         pass
 
-    @transition(field=state, source=['new', 'reviewed'], target='reviewed', conditions=[lambda self: self.is_single_result])
+    @transition(field=state, source=[State.NEW, State.REVIEWED], target=State.REVIEWED, conditions=[lambda self: self.is_single_result])
     def skip_review_single_result(self):
         pass
 
-    @transition(field=state, source='reviewed', target='evaluated', conditions=[lambda self: not self.is_fully_reviewed])
+    @transition(field=state, source=State.REVIEWED, target=State.EVALUATED, conditions=[lambda self: not self.is_fully_reviewed])
     def reopen_review(self):
         pass
 
-    @transition(field=state, source='reviewed', target='published')
+    @transition(field=state, source=State.REVIEWED, target=State.PUBLISHED)
     def publish(self):
         assert self.is_single_result or self._voter_count is None and self._participant_count is None
         self._voter_count = self.num_voters
@@ -641,7 +652,7 @@ class Evaluation(LoggedModel):
             self.textanswer_set.filter(state=TextAnswer.State.HIDDEN).delete()
             self.textanswer_set.update(original_answer=None)
 
-    @transition(field=state, source='published', target='reviewed')
+    @transition(field=state, source=State.PUBLISHED, target=State.REVIEWED)
     def unpublish(self):
         assert self.is_single_result or self._voter_count == self.voters.count() and self._participant_count == self.participants.count()
         self._voter_count = None
