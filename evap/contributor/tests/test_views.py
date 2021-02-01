@@ -197,7 +197,7 @@ class TestContributorEvaluationEditView(WebTest):
 
         form.submit(name="operation", value="save")
         self.evaluation = Evaluation.objects.get(pk=self.evaluation.pk)
-        self.assertEqual(self.evaluation.state, "prepared")
+        self.assertEqual(self.evaluation.state, Evaluation.State.PREPARED)
 
         form.submit(name="operation", value="approve")
         self.evaluation = Evaluation.objects.get(pk=self.evaluation.pk)

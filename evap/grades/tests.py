@@ -202,7 +202,7 @@ class GradeSemesterViewTest(WebTest):
     def test_does_not_crash(self):
         semester = baker.make(Semester, pk=1, grade_documents_are_deleted=False)
         course = baker.make(Course, semester=semester)
-        baker.make(Evaluation, course=course, state="prepared")
+        baker.make(Evaluation, course=course, state=Evaluation.State.PREPARED)
         page = self.app.get(self.url, user=self.grade_publisher, status=200)
         self.assertIn(course.name, page)
 
@@ -224,10 +224,10 @@ class GradeCourseViewTest(WebTest):
 
     def test_does_not_crash(self):
         semester = baker.make(Semester, pk=1, grade_documents_are_deleted=False)
-        baker.make(Evaluation, course=baker.make(Course, pk=1, semester=semester), state="prepared")
+        baker.make(Evaluation, course=baker.make(Course, pk=1, semester=semester), state=Evaluation.State.PREPARED)
         self.app.get('/grades/semester/1/course/1', user=self.grade_publisher, status=200)
 
     def test_403_on_archived_semester(self):
         archived_semester = baker.make(Semester, pk=1, grade_documents_are_deleted=True)
-        baker.make(Evaluation, course=baker.make(Course, pk=1, semester=archived_semester), state="prepared")
+        baker.make(Evaluation, course=baker.make(Course, pk=1, semester=archived_semester), state=Evaluation.State.PREPARED)
         self.app.get('/grades/semester/1/course/1', user=self.grade_publisher, status=403)
