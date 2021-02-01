@@ -203,7 +203,7 @@ class Questionnaire(models.Model):
 
     @property
     def can_be_edited_by_manager(self):
-        return not self.contributions.exclude(evaluation__state='new').exists()
+        return not self.contributions.exclude(evaluation__state=Evaluation.State.NEW).exists()
 
     @property
     def can_be_deleted_by_manager(self):
@@ -512,7 +512,7 @@ class Evaluation(LoggedModel):
     def can_be_seen_by(self, user):
         if user.is_manager:
             return True
-        if self.state == 'new':
+        if self.state == Evaluation.State.NEW:
             return False
         if user.is_reviewer and not self.course.semester.results_are_archived:
             return True
@@ -535,7 +535,7 @@ class Evaluation(LoggedModel):
 
     @property
     def can_be_edited_by_manager(self):
-        return not self.participations_are_archived and self.state in ['new', Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, Evaluation.State.APPROVED, Evaluation.State.IN_EVALUATION, Evaluation.State.EVALUATED, Evaluation.State.REVIEWED]
+        return not self.participations_are_archived and self.state in [Evaluation.State.NEW, Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, Evaluation.State.APPROVED, Evaluation.State.IN_EVALUATION, Evaluation.State.EVALUATED, Evaluation.State.REVIEWED]
 
     @property
     def can_be_deleted_by_manager(self):

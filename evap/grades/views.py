@@ -45,7 +45,7 @@ def semester_view(request, semester_id):
 
     courses = (semester.courses
         .filter(evaluations__wait_for_grade_upload_before_publishing=True)
-        .exclude(evaluations__state='new')
+        .exclude(evaluations__state=Evaluation.State.NEW)
         .distinct())
     courses = prefetch_data(courses)
 

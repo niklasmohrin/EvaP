@@ -1200,7 +1200,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
         self.helper_semester_state_views(evaluation, "approved", "new")
 
     def test_semester_contributor_ready_1(self):
-        evaluation = baker.make(Evaluation, course=self.course, state='new')
+        evaluation = baker.make(Evaluation, course=self.course, state=Evaluation.State.NEW)
         self.helper_semester_state_views(evaluation, "new", "prepared")
 
     def test_semester_contributor_ready_2(self):
@@ -1225,7 +1225,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
         self.assertEqual(evaluation.state, Evaluation.State.IN_EVALUATION)
 
     def test_operation_prepare(self):
-        evaluation = baker.make(Evaluation, state='new', course=self.course)
+        evaluation = baker.make(Evaluation, state=Evaluation.State.NEW, course=self.course)
         urloptions = '?evaluation={}&target_state=prepared'.format(evaluation.pk)
 
         response = self.app.get(self.url + urloptions, user=self.manager)
@@ -1262,7 +1262,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
         return actual_emails
 
     def test_operation_prepare_sends_email_to_responsible(self):
-        evaluation = baker.make(Evaluation, state='new', course=self.course)
+        evaluation = baker.make(Evaluation, state=Evaluation.State.NEW, course=self.course)
         url_options = '?evaluation={}&target_state=prepared'.format(evaluation.pk)
         actual_emails = self.submit_operation_prepare_form(url_options)
 
@@ -1279,7 +1279,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
     def test_operation_prepare_sends_one_email_to_each_responsible(self):
         other_responsible = baker.make(UserProfile, email='co-responsible@example.com')
         self.course.responsibles.add(other_responsible)
-        evaluation = baker.make(Evaluation, state='new', course=self.course)
+        evaluation = baker.make(Evaluation, state=Evaluation.State.NEW, course=self.course)
         url_options = '?evaluation={}&target_state=prepared'.format(evaluation.pk)
         actual_emails = self.submit_operation_prepare_form(url_options)
 
@@ -1294,8 +1294,8 @@ class TestEvaluationOperationView(WebTestStaffMode):
     def test_operation_prepare_with_multiple_evaluations(self):
         responsible_b = baker.make(UserProfile, email='responsible-b@example.com')
         course_b = baker.make(Course, semester=self.semester, responsibles=[responsible_b])
-        evaluation_a = baker.make(Evaluation, state='new', course=self.course)
-        evaluation_b = baker.make(Evaluation, state='new', course=course_b)
+        evaluation_a = baker.make(Evaluation, state=Evaluation.State.NEW, course=self.course)
+        evaluation_b = baker.make(Evaluation, state=Evaluation.State.NEW, course=course_b)
         url_options = '?evaluation={}&evaluation={}&target_state=prepared'.format(evaluation_a.pk, evaluation_b.pk)
         actual_emails = self.submit_operation_prepare_form(url_options)
 
@@ -1310,7 +1310,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
     def test_operation_prepare_sends_email_with_editors_in_cc(self):
         editor_a = baker.make(UserProfile, email='editor-a@example.com')
         editor_b = baker.make(UserProfile, email='editor-b@example.com')
-        evaluation = baker.make(Evaluation, state='new', course=self.course)
+        evaluation = baker.make(Evaluation, state=Evaluation.State.NEW, course=self.course)
         baker.make(Contribution, evaluation=evaluation, contributor=editor_a, role=Contribution.Role.EDITOR)
         baker.make(Contribution, evaluation=evaluation, contributor=editor_b, role=Contribution.Role.EDITOR)
         url_options = '?evaluation={}&target_state=prepared'.format(evaluation.pk)
@@ -1320,7 +1320,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
         self.assertEqual(actual_emails[0]['additional_cc_users'], {editor_a, editor_b})
 
     def test_operation_prepare_does_not_put_responsible_into_cc(self):
-        evaluation = baker.make(Evaluation, state='new', course=self.course)
+        evaluation = baker.make(Evaluation, state=Evaluation.State.NEW, course=self.course)
         baker.make(Contribution, evaluation=evaluation, contributor=self.responsible, role=Contribution.Role.EDITOR)
         url_options = '?evaluation={}&target_state=prepared'.format(evaluation.pk)
         actual_emails = self.submit_operation_prepare_form(url_options)
@@ -1330,7 +1330,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
 
     def test_operation_prepare_does_not_send_email_to_contributors(self):
         contributor = baker.make(UserProfile, email='contributor@example.com')
-        evaluation = baker.make(Evaluation, state='new', course=self.course)
+        evaluation = baker.make(Evaluation, state=Evaluation.State.NEW, course=self.course)
         baker.make(Contribution, evaluation=evaluation, contributor=contributor, role=Contribution.Role.CONTRIBUTOR)
         url_options = '?evaluation={}&target_state=prepared'.format(evaluation.pk)
         actual_emails = self.submit_operation_prepare_form(url_options)

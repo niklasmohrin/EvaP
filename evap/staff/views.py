@@ -126,7 +126,7 @@ def semester_view(request, semester_id):
                 stats.num_textanswers_reviewed += evaluation.num_reviewed_textanswers
             if evaluation.state >= Evaluation.State.EVALUATED:
                 stats.num_evaluations_evaluated += 1
-            if evaluation.state != 'new':
+            if evaluation.state != Evaluation.State.NEW:
                 stats.num_evaluations += 1
                 stats.first_start = min(stats.first_start, evaluation.vote_start_datetime)
                 stats.last_end = max(stats.last_end, evaluation.vote_end_date)
@@ -141,7 +141,7 @@ def semester_view(request, semester_id):
         num_evaluations=len(evaluations),
         degree_stats=degree_stats,
         courses=courses,
-        approval_states=['new', Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, Evaluation.State.APPROVED],
+        approval_states=[Evaluation.State.NEW, Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, Evaluation.State.APPROVED],
     )
     return render(request, "staff_semester_view.html", template_data)
 
@@ -195,7 +195,7 @@ class ReadyForEditorsOperation(EvaluationOperation):
 
     @staticmethod
     def applicable_to(evaluation):
-        return evaluation.state in ['new', Evaluation.State.EDITOR_APPROVED]
+        return evaluation.state in [Evaluation.State.NEW, Evaluation.State.EDITOR_APPROVED]
 
     @staticmethod
     def warning_for_inapplicables(amount):
@@ -570,7 +570,7 @@ def semester_questionnaire_assign(request, semester_id):
     semester = get_object_or_404(Semester, id=semester_id)
     if semester.participations_are_archived:
         raise PermissionDenied
-    evaluations = semester.evaluations.filter(state='new')
+    evaluations = semester.evaluations.filter(state=Evaluation.State.NEW)
     course_types = CourseType.objects.filter(courses__evaluations__in=evaluations)
     form = QuestionnairesAssignForm(request.POST or None, course_types=course_types)
 
