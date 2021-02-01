@@ -1184,7 +1184,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
         )
         cache_results(evaluation)
 
-        self.helper_semester_state_views(evaluation, "reviewed", "published")
+        self.helper_semester_state_views(evaluation, Evaluation.State.REVIEWED, "published")
         self.assertEqual(len(mail.outbox), 3)
         self.assertCountEqual(
             [[participant1.email], [participant2.email], [self.responsible.email]],
@@ -1209,7 +1209,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
 
     def test_semester_unpublish(self):
         evaluation = baker.make(Evaluation, course=self.course, state=Evaluation.State.PUBLISHED, _participant_count=0, _voter_count=0)
-        self.helper_semester_state_views(evaluation, "published", "reviewed")
+        self.helper_semester_state_views(evaluation, "published", Evaluation.State.REVIEWED)
 
     def test_operation_start_evaluation(self):
         evaluation = baker.make(Evaluation, state=Evaluation.State.APPROVED, course=self.course)

@@ -240,7 +240,7 @@ class TestExporters(TestCase):
         semester = baker.make(Semester)
         degree = baker.make(Degree)
         published_evaluation = baker.make(Evaluation, state="published", course__semester=semester, course__degrees=[degree], course__type__order=1)
-        unpublished_evaluation = baker.make(Evaluation, state="reviewed", course__semester=semester, course__degrees=[degree], course__type__order=2)
+        unpublished_evaluation = baker.make(Evaluation, state=Evaluation.State.REVIEWED, course__semester=semester, course__degrees=[degree], course__type__order=2)
         course_types = [published_evaluation.course.type.id, unpublished_evaluation.course.type.id]
 
         cache_results(published_evaluation)

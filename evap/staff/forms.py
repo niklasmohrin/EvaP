@@ -386,7 +386,7 @@ class SingleResultForm(forms.ModelForm):
         evaluation._participant_count = total_votes
         evaluation._voter_count = total_votes
 
-        # change state to "reviewed"
+        # change state to Evaluation.State.REVIEWED
         # works only for single_results so the evaluation and its contribution must be saved first
         evaluation.skip_review_single_result()
         evaluation.save()
