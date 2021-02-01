@@ -21,7 +21,7 @@ from evap.results.views import get_evaluation_result_template_fragment_cache_key
 @override_settings(EVALUATION_END_OFFSET_HOURS=0)
 class TestEvaluations(WebTest):
     def test_approved_to_in_evaluation(self):
-        evaluation = baker.make(Evaluation, state='approved', vote_start_datetime=datetime.now())
+        evaluation = baker.make(Evaluation, state=Evaluation.State.APPROVED, vote_start_datetime=datetime.now())
 
         with patch('evap.evaluation.models.EmailTemplate') as mock:
             mock.EVALUATION_STARTED = EmailTemplate.EVALUATION_STARTED
@@ -118,7 +118,7 @@ class TestEvaluations(WebTest):
     def test_approved_to_in_evaluation_sends_emails(self):
         """ Regression test for #945 """
         participant = baker.make(UserProfile, email='foo@example.com')
-        evaluation = baker.make(Evaluation, state='approved', vote_start_datetime=datetime.now(), participants=[participant])
+        evaluation = baker.make(Evaluation, state=Evaluation.State.APPROVED, vote_start_datetime=datetime.now(), participants=[participant])
 
         Evaluation.update_evaluations()
 

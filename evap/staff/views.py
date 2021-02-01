@@ -141,7 +141,7 @@ def semester_view(request, semester_id):
         num_evaluations=len(evaluations),
         degree_stats=degree_stats,
         courses=courses,
-        approval_states=['new', Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, 'approved'],
+        approval_states=['new', Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, Evaluation.State.APPROVED],
     )
     return render(request, "staff_semester_view.html", template_data)
 
@@ -170,7 +170,7 @@ class RevertToNewOperation(EvaluationOperation):
 
     @staticmethod
     def applicable_to(evaluation):
-        return evaluation.state in [Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, 'approved']
+        return evaluation.state in [Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, Evaluation.State.APPROVED]
 
     @staticmethod
     def warning_for_inapplicables(amount):
@@ -236,7 +236,7 @@ class BeginEvaluationOperation(EvaluationOperation):
 
     @staticmethod
     def applicable_to(evaluation):
-        return evaluation.state == 'approved' and evaluation.vote_end_date >= date.today()
+        return evaluation.state == Evaluation.State.APPROVED and evaluation.vote_end_date >= date.today()
 
     @staticmethod
     def warning_for_inapplicables(amount):

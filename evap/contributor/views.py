@@ -25,7 +25,7 @@ def index(request):
     show_delegated = get_parameter_from_url_or_session(request, "show_delegated", True)
 
     represented_proxy_users = user.represented_users.filter(is_proxy_user=True)
-    contributor_visible_states = [Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, 'approved', 'in_evaluation', Evaluation.State.EVALUATED, 'reviewed', 'published']
+    contributor_visible_states = [Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, Evaluation.State.APPROVED, 'in_evaluation', Evaluation.State.EVALUATED, 'reviewed', 'published']
     own_courses = Course.objects.filter(
         Q(evaluations__state__in=contributor_visible_states) & (
             Q(responsibles=user) |
@@ -116,7 +116,7 @@ def evaluation_view(request, evaluation_id):
     evaluation = get_object_or_404(Evaluation, id=evaluation_id)
 
     # check rights
-    if not evaluation.is_user_editor_or_delegate(user) or evaluation.state not in [Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, 'approved', 'in_evaluation', Evaluation.State.EVALUATED, 'reviewed']:
+    if not evaluation.is_user_editor_or_delegate(user) or evaluation.state not in [Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, Evaluation.State.APPROVED, 'in_evaluation', Evaluation.State.EVALUATED, 'reviewed']:
         raise PermissionDenied
 
     InlineContributionFormset = inlineformset_factory(Evaluation, Contribution, formset=ContributionFormSet, form=EditorContributionForm, extra=0)
@@ -207,7 +207,7 @@ def evaluation_preview(request, evaluation_id):
     evaluation = get_object_or_404(Evaluation, id=evaluation_id)
 
     # check rights
-    if not (evaluation.is_user_responsible_or_contributor_or_delegate(user) and evaluation.state in [Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, 'approved', 'in_evaluation', Evaluation.State.EVALUATED, 'reviewed']):
+    if not (evaluation.is_user_responsible_or_contributor_or_delegate(user) and evaluation.state in [Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, Evaluation.State.APPROVED, 'in_evaluation', Evaluation.State.EVALUATED, 'reviewed']):
         raise PermissionDenied
 
     return get_valid_form_groups_or_render_vote_page(request, evaluation, preview=True)[1]

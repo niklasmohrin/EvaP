@@ -1196,7 +1196,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
         self.helper_semester_state_views(evaluation, "prepared", "new")
 
     def test_semester_reset_2(self):
-        evaluation = baker.make(Evaluation, course=self.course, state='approved')
+        evaluation = baker.make(Evaluation, course=self.course, state=Evaluation.State.APPROVED)
         self.helper_semester_state_views(evaluation, "approved", "new")
 
     def test_semester_contributor_ready_1(self):
@@ -1212,7 +1212,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
         self.helper_semester_state_views(evaluation, "published", "reviewed")
 
     def test_operation_start_evaluation(self):
-        evaluation = baker.make(Evaluation, state='approved', course=self.course)
+        evaluation = baker.make(Evaluation, state=Evaluation.State.APPROVED, course=self.course)
         urloptions = '?evaluation={}&target_state=in_evaluation'.format(evaluation.pk)
 
         response = self.app.get(self.url + urloptions, user=self.manager)
