@@ -117,7 +117,7 @@ class Semester(models.Model):
 
     @classmethod
     def get_all_with_published_unarchived_results(cls):
-        return cls.objects.filter(courses__evaluations__state="published", results_are_archived=False).distinct()
+        return cls.objects.filter(courses__evaluations__state=Evaluation.State.PUBLISHED, results_are_archived=False).distinct()
 
     @classmethod
     def active_semester(cls):
@@ -574,7 +574,7 @@ class Evaluation(LoggedModel):
 
     @property
     def participations_can_be_archived(self):
-        return not self.course.semester.participations_are_archived and self.state in [Evaluation.State.NEW, "published"]
+        return not self.course.semester.participations_are_archived and self.state in [Evaluation.State.NEW, Evaluation.State.PUBLISHED]
 
     @property
     def has_external_participant(self):

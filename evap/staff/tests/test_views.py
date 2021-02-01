@@ -97,7 +97,7 @@ class TestUserIndexView(WebTestStaffMode):
         # this triggers more checks in UserProfile.can_be_deleted_by_manager
         evaluation = baker.make(
             Evaluation,
-            state="published",
+            state=Evaluation.State.PUBLISHED,
             course__semester=semester,
             _participant_count=1,
             _voter_count=1,
@@ -1114,7 +1114,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
         page = self.app.get("/staff/semester/1", user=self.manager)
         form = page.forms["evaluation_operation_form"]
         form['evaluation'] = evaluation.pk
-        response = form.submit('target_state', value="published")
+        response = form.submit('target_state', value=Evaluation.State.PUBLISHED)
 
         form = response.forms["evaluation-operation-form"]
         form['send_email_contributor'] = contributors
@@ -1184,7 +1184,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
         )
         cache_results(evaluation)
 
-        self.helper_semester_state_views(evaluation, Evaluation.State.REVIEWED, "published")
+        self.helper_semester_state_views(evaluation, Evaluation.State.REVIEWED, Evaluation.State.PUBLISHED)
         self.assertEqual(len(mail.outbox), 3)
         self.assertCountEqual(
             [[participant1.email], [participant2.email], [self.responsible.email]],
@@ -1209,7 +1209,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
 
     def test_semester_unpublish(self):
         evaluation = baker.make(Evaluation, course=self.course, state=Evaluation.State.PUBLISHED, _participant_count=0, _voter_count=0)
-        self.helper_semester_state_views(evaluation, "published", Evaluation.State.REVIEWED)
+        self.helper_semester_state_views(evaluation, Evaluation.State.PUBLISHED, Evaluation.State.REVIEWED)
 
     def test_operation_start_evaluation(self):
         evaluation = baker.make(Evaluation, state=Evaluation.State.APPROVED, course=self.course)

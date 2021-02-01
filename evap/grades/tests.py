@@ -149,7 +149,7 @@ class GradeUploadTest(WebTest):
         evaluation = Evaluation.objects.get(id=evaluation.id)
         self.assertTrue(evaluation.course.gets_no_grade_documents)
         # evaluation should get published here
-        self.assertEqual(evaluation.state, "published")
+        self.assertEqual(evaluation.state, Evaluation.State.PUBLISHED)
         self.assertEqual(len(mail.outbox), evaluation.num_participants + evaluation.contributions.exclude(contributor=None).count())
 
         response = self.app.post("/grades/toggle_no_grades", params={"course_id": evaluation.course.id}, user=self.grade_publisher)

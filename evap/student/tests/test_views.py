@@ -26,8 +26,8 @@ class TestStudentIndexView(WebTestWith200Check):
     def test_num_queries_is_constant(self):
         semester1 = baker.make(Semester)
         semester2 = baker.make(Semester, participations_are_archived=True)
-        baker.make(Evaluation, course__semester=semester1, state="published", participants=[self.user], _quantity=100)
-        baker.make(Evaluation, course__semester=semester2, state="published", participants=[self.user], _quantity=100)
+        baker.make(Evaluation, course__semester=semester1, state=Evaluation.State.PUBLISHED, participants=[self.user], _quantity=100)
+        baker.make(Evaluation, course__semester=semester2, state=Evaluation.State.PUBLISHED, participants=[self.user], _quantity=100)
 
         with CaptureQueriesContext(connection) as context:
             self.app.get(self.url, user=self.user)

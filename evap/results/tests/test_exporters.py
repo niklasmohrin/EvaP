@@ -239,7 +239,7 @@ class TestExporters(TestCase):
     def test_include_unpublished(self):
         semester = baker.make(Semester)
         degree = baker.make(Degree)
-        published_evaluation = baker.make(Evaluation, state="published", course__semester=semester, course__degrees=[degree], course__type__order=1)
+        published_evaluation = baker.make(Evaluation, state=Evaluation.State.PUBLISHED, course__semester=semester, course__degrees=[degree], course__type__order=1)
         unpublished_evaluation = baker.make(Evaluation, state=Evaluation.State.REVIEWED, course__semester=semester, course__degrees=[degree], course__type__order=2)
         course_types = [published_evaluation.course.type.id, unpublished_evaluation.course.type.id]
 
@@ -266,7 +266,7 @@ class TestExporters(TestCase):
         degree = baker.make(Degree)
         enough_voters_evaluation = baker.make(
             Evaluation,
-            state="published",
+            state=Evaluation.State.PUBLISHED,
             course__semester=semester,
             course__degrees=[degree],
             _voter_count=1000,
@@ -274,7 +274,7 @@ class TestExporters(TestCase):
         )
         not_enough_voters_evaluation = baker.make(
             Evaluation,
-            state="published",
+            state=Evaluation.State.PUBLISHED,
             course__semester=semester,
             course__degrees=[degree],
             _voter_count=1,
@@ -309,14 +309,14 @@ class TestExporters(TestCase):
 
     def test_exclude_single_result(self):
         degree = baker.make(Degree)
-        evaluation = baker.make(Evaluation, is_single_result=True, state="published", course__degrees=[degree])
+        evaluation = baker.make(Evaluation, is_single_result=True, state=Evaluation.State.PUBLISHED, course__degrees=[degree])
         cache_results(evaluation)
         sheet = self.get_export_sheet(evaluation.course.semester, degree, [evaluation.course.type.id])
         self.assertEqual(len(sheet.row_values(0)), 1, "There should be no column for the evaluation, only the row description")
 
     def test_exclude_used_but_unanswered_questionnaires(self):
         degree = baker.make(Degree)
-        evaluation = baker.make(Evaluation, _voter_count=10, _participant_count=10, state="published", course__degrees=[degree])
+        evaluation = baker.make(Evaluation, _voter_count=10, _participant_count=10, state=Evaluation.State.PUBLISHED, course__degrees=[degree])
         used_questionnaire = baker.make(Questionnaire)
         used_question = baker.make(Question, type=Question.LIKERT, questionnaire=used_questionnaire)
         unused_questionnaire = baker.make(Questionnaire)
@@ -334,7 +334,7 @@ class TestExporters(TestCase):
     def test_degree_course_type_name(self):
         degree = baker.make(Degree, name_en="Celsius")
         course_type = baker.make(CourseType, name_en="LetsPlay")
-        evaluation = baker.make(Evaluation, course__degrees=[degree], course__type=course_type, state="published")
+        evaluation = baker.make(Evaluation, course__degrees=[degree], course__type=course_type, state=Evaluation.State.PUBLISHED)
         cache_results(evaluation)
 
         sheet = self.get_export_sheet(evaluation.course.semester, degree, [course_type.id])
@@ -343,8 +343,8 @@ class TestExporters(TestCase):
     def test_multiple_evaluations(self):
         semester = baker.make(Semester)
         degree = baker.make(Degree)
-        evaluation1 = baker.make(Evaluation, course__semester=semester, course__degrees=[degree], state="published")
-        evaluation2 = baker.make(Evaluation, course__semester=semester, course__degrees=[degree], state="published")
+        evaluation1 = baker.make(Evaluation, course__semester=semester, course__degrees=[degree], state=Evaluation.State.PUBLISHED)
+        evaluation2 = baker.make(Evaluation, course__semester=semester, course__degrees=[degree], state=Evaluation.State.PUBLISHED)
         cache_results(evaluation1)
         cache_results(evaluation2)
 
@@ -357,7 +357,7 @@ class TestExporters(TestCase):
 
     def test_correct_grades_and_bottom_numbers(self):
         degree = baker.make(Degree)
-        evaluation = baker.make(Evaluation, _voter_count=5, _participant_count=10, course__degrees=[degree], state="published")
+        evaluation = baker.make(Evaluation, _voter_count=5, _participant_count=10, course__degrees=[degree], state=Evaluation.State.PUBLISHED)
         questionnaire1 = baker.make(Questionnaire, order=1)
         questionnaire2 = baker.make(Questionnaire, order=2)
         question1 = baker.make(Question, type=Question.LIKERT, questionnaire=questionnaire1)
@@ -384,7 +384,7 @@ class TestExporters(TestCase):
         evaluations = [
             baker.make(Evaluation, course=course,
                        name_en=f"eval{i}", name_de=f"eval{i}",
-                       state="published", _voter_count=5, _participant_count=10)
+                       state=Evaluation.State.PUBLISHED, _voter_count=5, _participant_count=10)
             for i in range(3)
         ]
 
@@ -411,7 +411,7 @@ class TestExporters(TestCase):
 
     def test_yes_no_question_result(self):
         degree = baker.make(Degree)
-        evaluation = baker.make(Evaluation, _voter_count=6, _participant_count=10, course__degrees=[degree], state="published")
+        evaluation = baker.make(Evaluation, _voter_count=6, _participant_count=10, course__degrees=[degree], state=Evaluation.State.PUBLISHED)
         questionnaire = baker.make(Questionnaire)
         question = baker.make(Question, type=Question.POSITIVE_YES_NO, questionnaire=questionnaire)
         # 1,5 are yes, no according to RatingAnswerCounter class definition

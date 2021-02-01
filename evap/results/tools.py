@@ -226,7 +226,7 @@ def average_non_grade_rating_questions_distribution(results):
 
 
 def calculate_average_course_distribution(course, check_for_unpublished_evaluations=True):
-    if check_for_unpublished_evaluations and course.evaluations.exclude(state="published").exists():
+    if check_for_unpublished_evaluations and course.evaluations.exclude(state=Evaluation.State.PUBLISHED).exists():
         return None
 
     return avg_distribution([
@@ -243,7 +243,7 @@ def calculate_average_course_distribution(course, check_for_unpublished_evaluati
 def get_evaluations_with_course_result_attributes(evaluations):
     courses_with_unpublished_evaluations = (Course.objects
         .filter(evaluations__in=evaluations)
-        .filter(Exists(Evaluation.objects.filter(course=OuterRef('pk')).exclude(state="published")))
+        .filter(Exists(Evaluation.objects.filter(course=OuterRef('pk')).exclude(state=Evaluation.State.PUBLISHED)))
         .values_list('id', flat=True)
     )
 

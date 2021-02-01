@@ -66,7 +66,7 @@ def index(request):
     displayed_evaluations.sort(key=lambda evaluation: (evaluation.course.name, evaluation.name))  # evaluations must be sorted for regrouping them in the template
 
     for evaluation in displayed_evaluations:
-        if evaluation.state == "published":
+        if evaluation.state == Evaluation.State.PUBLISHED:
             if not evaluation.is_single_result:
                 evaluation.distribution = calculate_average_distribution(evaluation)
             else:

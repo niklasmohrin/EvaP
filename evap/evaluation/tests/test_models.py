@@ -495,7 +495,7 @@ class ParticipationArchivingTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.semester = baker.make(Semester)
-        cls.evaluation = baker.make(Evaluation, state="published", course=baker.make(Course, semester=cls.semester))
+        cls.evaluation = baker.make(Evaluation, state=Evaluation.State.PUBLISHED, course=baker.make(Course, semester=cls.semester))
         cls.evaluation.general_contribution.questionnaires.set([baker.make(Questionnaire)])
 
         users = baker.make(UserProfile, _quantity=3)
@@ -564,13 +564,13 @@ class ParticipationArchivingTests(TestCase):
             self.semester.courses.first().evaluations.first()._archive()
 
     def test_evaluation_participations_are_not_archived_if_participant_count_is_set(self):
-        evaluation = baker.make(Evaluation, state="published", _participant_count=1, _voter_count=1)
+        evaluation = baker.make(Evaluation, state=Evaluation.State.PUBLISHED, _participant_count=1, _voter_count=1)
         self.assertFalse(evaluation.participations_are_archived)
         self.assertTrue(evaluation.participations_can_be_archived)
 
     def test_archiving_participations_doesnt_change_single_results_participant_count(self):
         responsible = baker.make(UserProfile)
-        evaluation = baker.make(Evaluation, state="published", is_single_result=True, _participant_count=5, _voter_count=5)
+        evaluation = baker.make(Evaluation, state=Evaluation.State.PUBLISHED, is_single_result=True, _participant_count=5, _voter_count=5)
         contribution = baker.make(
             Contribution,
             evaluation=evaluation,

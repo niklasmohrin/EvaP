@@ -288,7 +288,7 @@ def get_evaluations_of_course(course, request):
     course_evaluations = []
 
     if course.evaluations.count() > 1:
-        course_evaluations = [evaluation for evaluation in course.evaluations.filter(state="published") if evaluation.can_be_seen_by(request.user)]
+        course_evaluations = [evaluation for evaluation in course.evaluations.filter(state=Evaluation.State.PUBLISHED) if evaluation.can_be_seen_by(request.user)]
         if request.user.is_reviewer:
             course_evaluations += course.evaluations.filter(state__in=[Evaluation.State.IN_EVALUATION, Evaluation.State.EVALUATED, Evaluation.State.REVIEWED])
 

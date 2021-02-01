@@ -53,7 +53,7 @@ def index(request):
             inner_evaluation.num_participants = evaluations_by_id[inner_evaluation.id]['num_participants']
 
     for evaluation in evaluations:
-        if evaluation.state == "published":
+        if evaluation.state == Evaluation.State.PUBLISHED:
             if not evaluation.is_single_result:
                 evaluation.distribution = calculate_average_distribution(evaluation)
             else:

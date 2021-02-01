@@ -331,7 +331,7 @@ class TestCalculateAverageDistribution(TestCase):
             is_single_result=True,
             vote_start_datetime=datetime.now(),
             vote_end_date=datetime.now().date(),
-            state="published",
+            state=Evaluation.State.PUBLISHED,
         )
         single_result_questionnaire = Questionnaire.single_result_questionnaire()
         single_result_question = single_result_questionnaire.questions.first()
