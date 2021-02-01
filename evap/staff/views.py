@@ -141,7 +141,7 @@ def semester_view(request, semester_id):
         num_evaluations=len(evaluations),
         degree_stats=degree_stats,
         courses=courses,
-        approval_states=['new', Evaluation.State.PREPARED, 'editor_approved', 'approved'],
+        approval_states=['new', Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, 'approved'],
     )
     return render(request, "staff_semester_view.html", template_data)
 
@@ -170,7 +170,7 @@ class RevertToNewOperation(EvaluationOperation):
 
     @staticmethod
     def applicable_to(evaluation):
-        return evaluation.state in [Evaluation.State.PREPARED, 'editor_approved', 'approved']
+        return evaluation.state in [Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, 'approved']
 
     @staticmethod
     def warning_for_inapplicables(amount):
@@ -195,7 +195,7 @@ class ReadyForEditorsOperation(EvaluationOperation):
 
     @staticmethod
     def applicable_to(evaluation):
-        return evaluation.state in ['new', 'editor_approved']
+        return evaluation.state in ['new', Evaluation.State.EDITOR_APPROVED]
 
     @staticmethod
     def warning_for_inapplicables(amount):
@@ -593,7 +593,7 @@ def semester_questionnaire_assign(request, semester_id):
 def semester_preparation_reminder(request, semester_id):
     semester = get_object_or_404(Semester, id=semester_id)
 
-    evaluations = semester.evaluations.filter(state__in=[Evaluation.State.PREPARED, 'editor_approved']).prefetch_related("course__degrees")
+    evaluations = semester.evaluations.filter(state__in=[Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED]).prefetch_related("course__degrees")
 
     prepared_evaluations = semester.evaluations.filter(state__in=[Evaluation.State.PREPARED])
     responsibles = list(set(responsible for evaluation in prepared_evaluations for responsible in evaluation.course.responsibles.all()))

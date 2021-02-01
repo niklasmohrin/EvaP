@@ -76,7 +76,7 @@ def index(request):
 
     unfinished_evaluations_query = (
         Evaluation.objects
-        .filter(participants=request.user, state__in=[Evaluation.State.PREPARED, 'editor_approved', 'approved', 'in_evaluation'])
+        .filter(participants=request.user, state__in=[Evaluation.State.PREPARED, Evaluation.State.EDITOR_APPROVED, 'approved', 'in_evaluation'])
         .exclude(voters=request.user)
         .prefetch_related('course__responsibles', 'course__type', 'course__semester')
     )

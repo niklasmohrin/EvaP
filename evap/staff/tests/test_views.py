@@ -1204,7 +1204,7 @@ class TestEvaluationOperationView(WebTestStaffMode):
         self.helper_semester_state_views(evaluation, "new", "prepared")
 
     def test_semester_contributor_ready_2(self):
-        evaluation = baker.make(Evaluation, course=self.course, state='editor_approved')
+        evaluation = baker.make(Evaluation, course=self.course, state=Evaluation.State.EDITOR_APPROVED)
         self.helper_semester_state_views(evaluation, "editor_approved", "prepared")
 
     def test_semester_unpublish(self):
