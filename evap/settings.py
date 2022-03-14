@@ -349,6 +349,7 @@ SLOGANS_DE = [
     "Ein Vorzeigeprojekt auf Python-Basis",
     "Erleichtert Verfolgung aufgetretener Probleme",
     "Entwickelt von arbeitsamen Personen",
+    "Eine Veränderung anlässlich PR-Bedürfnis",
 ]
 SLOGANS_EN = [
     "Extremely valuable automated processing",
