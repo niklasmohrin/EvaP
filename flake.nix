@@ -24,6 +24,14 @@
           evap = pkgs.callPackage ./nix/shell.nix {
             poetry2nix = inputs.poetry2nix.lib.mkPoetry2Nix { inherit pkgs; };
             projectDir = self;
+            extraPythonPackages = (ps: with ps; [
+              python-lsp-server
+              pylsp-mypy
+              pylsp-rope
+              python-lsp-black
+              python-lsp-ruff
+              ujson
+            ]);
           };
           evap-dev = evap.override { poetry-groups = [ "dev" ]; };
           default = evap-dev;
