@@ -1,4 +1,4 @@
-{ pkgs, python3, poetry2nix, pyproject, poetrylock, poetry-groups ? [ ], extraPackages ? [ ], extraPythonPackages ? (ps: [ ]), ... }:
+{ pkgs, lib ? pkgs.lib, python3, poetry2nix, pyproject, poetrylock, poetry-groups ? [ ], extraPackages ? [ ], extraPythonPackages ? (ps: [ ]), ... }:
 
 let
   # When running a nix shell, XDG_DATA_DIRS will be populated so that bash_completion can (lazily) find this completion script
@@ -22,6 +22,12 @@ let
     overrides = poetry2nix.overrides.withDefaults (final: prev: {
       # https://github.com/nix-community/poetry2nix/issues/1499
       django-stubs-ext = prev.django-stubs-ext.override { preferWheel = false; };
+
+      psycopg = prev.psycopg.overridePythonAttrs (old: {
+        buildInputs = old.buildInputs or [ ]
+          ++ lib.optionals pkgs.stdenv.isDarwin [ pkgs.openssl ];
+        nativeBuildInputs = old.nativeBuildInputs or [ ] ++ [ pkgs.postgresql ];
+      });
     });
     groups = poetry-groups;
     checkGroups = [ ]; # would otherwise always install dev-dependencies
